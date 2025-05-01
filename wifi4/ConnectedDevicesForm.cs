@@ -1,0 +1,152 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using wifi4;
+
+namespace wifi4
+{
+    public partial class ConnectedDevicesForm : Form
+    {
+        private Dictionary<string, string> customDeviceNames = new Dictionary<string, string>();
+        private string customNamesFilePath = "custom_device_names.txt";
+
+        public ConnectedDevicesForm()
+        {
+            InitializeComponent();
+            LoadCustomDeviceNames();
+        }
+
+        private async void btnScan_Click(object sender, EventArgs e)
+        {
+            flowDevices.Controls.Clear();
+            labelCount.Text = "Tarama yapılıyor...";
+
+            try
+            {
+                string arpOutput = RunCommand("arp", "-a");
+                string[] arpLines = arpOutput.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+                HashSet<string> seenMacs = new HashSet<string>();
+
+                foreach (string line in arpLines)
+                {
+                    Match match = Regex.Match(line, @"(?<ip>\d+\.\d+\.\d+\.\d+)\s+([-\w]+)?\s+(?<mac>([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2})");
+
+                    if (match.Success)
+                    {
+                        string ip = match.Groups["ip"].Value;
+                        string mac = match.Groups["mac"].Value.ToUpper();
+
+                        if (seenMacs.Contains(mac))
+                            continue;
+                        seenMacs.Add(mac);
+
+                        string hostname = "Çözümlenemedi";
+                        try
+                        {
+                            var hostEntry = await Dns.GetHostEntryAsync(ip);
+                            hostname = hostEntry.HostName;
+                        }
+                        catch { }
+
+                        string vendor = await GetVendorFromMacAsync(mac);
+                        string customName = customDeviceNames.ContainsKey(mac) ? customDeviceNames[mac] : "Bilinmeyen";
+
+                        AddDeviceCard(ip, mac, hostname, vendor, customName);
+                    }
+                }
+
+                labelCount.Text = "Toplam cihaz sayısı: " + seenMacs.Count;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Hata: " + ex.Message);
+            }
+        }
+
+        private string RunCommand(string command, string args)
+        {
+            try
+            {
+                ProcessStartInfo psi = new ProcessStartInfo(command, args)
+                {
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using (Process process = Process.Start(psi))
+                {
+                    process.WaitForExit();
+                    return process.StandardOutput.ReadToEnd();
+                }
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
+        private async Task<string> GetVendorFromMacAsync(string mac)
+        {
+            try
+            {
+                using (var client = new WebClient())
+                {
+                    client.Headers.Add("User-Agent", "CSharpApp");
+                    string result = await client.DownloadStringTaskAsync("https://api.macvendors.com/" + mac);
+                    return result;
+                }
+            }
+            catch
+            {
+                return "Bilinmeyen Üretici";
+            }
+        }
+
+        private void AddDeviceCard(string ip, string mac, string hostname, string vendor, string name)
+        {
+            var panel = new Panel
+            {
+                Width = 300,
+                Height = 100,
+                BackColor = System.Drawing.Color.LightGray,
+                Margin = new Padding(5)
+            };
+
+            var lbl = new Label
+            {
+                Text = $"IP: {ip}\nMAC: {mac}\nHost: {hostname}\nÜretici: {vendor}\nAd: {name}",
+                AutoSize = true
+            };
+
+            panel.Controls.Add(lbl);
+            flowDevices.Controls.Add(panel);
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            var menu = new MainMenuForm();
+            menu.Show();
+            this.Close();
+        }
+
+        private void LoadCustomDeviceNames()
+        {
+            if (!System.IO.File.Exists(customNamesFilePath)) return;
+
+            foreach (var line in System.IO.File.ReadAllLines(customNamesFilePath))
+            {
+                var parts = line.Split('|');
+                if (parts.Length == 2)
+                    customDeviceNames[parts[0]] = parts[1];
+            }
+        }
+
+        
+    }
+}
