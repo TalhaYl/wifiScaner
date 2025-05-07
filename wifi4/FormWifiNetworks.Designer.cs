@@ -36,17 +36,20 @@
             ssıd = new ColumnHeader();
             signal = new ColumnHeader();
             security = new ColumnHeader();
+            lblScan = new Label();
+            lblHomePage = new Label();
             SuspendLayout();
             // 
             // btnWifiScan
             // 
             btnWifiScan.BackgroundImage = (Image)resources.GetObject("btnWifiScan.BackgroundImage");
             btnWifiScan.BackgroundImageLayout = ImageLayout.Center;
+            btnWifiScan.FlatAppearance.BorderSize = 0;
             btnWifiScan.FlatStyle = FlatStyle.Popup;
             btnWifiScan.ImageAlign = ContentAlignment.MiddleLeft;
-            btnWifiScan.Location = new Point(25, 41);
+            btnWifiScan.Location = new Point(22, 398);
             btnWifiScan.Name = "btnWifiScan";
-            btnWifiScan.Size = new Size(60, 61);
+            btnWifiScan.Size = new Size(73, 86);
             btnWifiScan.TabIndex = 0;
             btnWifiScan.TextAlign = ContentAlignment.BottomCenter;
             btnWifiScan.UseVisualStyleBackColor = true;
@@ -56,8 +59,9 @@
             // 
             btnback.BackgroundImage = (Image)resources.GetObject("btnback.BackgroundImage");
             btnback.BackgroundImageLayout = ImageLayout.Center;
+            btnback.FlatAppearance.BorderSize = 0;
             btnback.FlatStyle = FlatStyle.Popup;
-            btnback.Location = new Point(22, 398);
+            btnback.Location = new Point(360, 398);
             btnback.Name = "btnback";
             btnback.Size = new Size(63, 86);
             btnback.TabIndex = 1;
@@ -67,7 +71,7 @@
             // labelNetworkCount
             // 
             labelNetworkCount.AutoSize = true;
-            labelNetworkCount.Location = new Point(100, 82);
+            labelNetworkCount.Location = new Point(22, 87);
             labelNetworkCount.Name = "labelNetworkCount";
             labelNetworkCount.Size = new Size(88, 20);
             labelNetworkCount.TabIndex = 3;
@@ -96,12 +100,32 @@
             // 
             security.Text = "security";
             // 
+            // lblScan
+            // 
+            lblScan.AutoSize = true;
+            lblScan.Location = new Point(24, 487);
+            lblScan.Name = "lblScan";
+            lblScan.Size = new Size(71, 20);
+            lblScan.TabIndex = 5;
+            lblScan.Text = "Wifi Scan";
+            // 
+            // lblHomePage
+            // 
+            lblHomePage.AutoSize = true;
+            lblHomePage.Location = new Point(350, 487);
+            lblHomePage.Name = "lblHomePage";
+            lblHomePage.Size = new Size(86, 20);
+            lblHomePage.TabIndex = 6;
+            lblHomePage.Text = "Home Page";
+            // 
             // FormWifiNetworks
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(192, 255, 255);
             ClientSize = new Size(511, 604);
+            Controls.Add(lblHomePage);
+            Controls.Add(lblScan);
             Controls.Add(listViewWifiNetworks);
             Controls.Add(labelNetworkCount);
             Controls.Add(btnback);
@@ -121,5 +145,7 @@
         private ColumnHeader ssıd;
         private ColumnHeader signal;
         private ColumnHeader security;
+        private Label lblScan;
+        private Label lblHomePage;
     }
 }

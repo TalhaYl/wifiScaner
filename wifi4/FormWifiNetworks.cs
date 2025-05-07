@@ -94,6 +94,8 @@ namespace wifi4
             mainMenu.Show();
             this.Close(); // Bu formu kapat
         }
+
+       
     }
 
 }

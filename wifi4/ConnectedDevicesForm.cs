@@ -115,7 +115,8 @@ namespace wifi4
                 Width = 300,
                 Height = 100,
                 BackColor = System.Drawing.Color.LightGray,
-                Margin = new Padding(5)
+                Margin = new Padding(5),
+                Tag = mac  
             };
 
             var lbl = new Label
@@ -124,9 +125,40 @@ namespace wifi4
                 AutoSize = true
             };
 
+            
+            panel.DoubleClick += (sender, e) => RenameDevice(panel, mac, name);
+
             panel.Controls.Add(lbl);
             flowDevices.Controls.Add(panel);
         }
+
+        private void RenameDevice(Panel panel, string mac, string currentName)
+        {
+            
+            string newName = Microsoft.VisualBasic.Interaction.InputBox(
+                $"Cihaz için yeni isim girin (MAC: {mac}):",
+                "Cihaz İsmi Değiştir",
+                currentName);
+
+            if (!string.IsNullOrWhiteSpace(newName) && newName != currentName)
+            {
+                
+                customDeviceNames[mac] = newName;
+                SaveCustomDeviceNames();
+
+                
+                var lbl = (Label)panel.Controls[0];
+                lbl.Text = lbl.Text.Replace($"Ad: {currentName}", $"Ad: {newName}");
+
+                MessageBox.Show("Cihaz adı başarıyla güncellendi!");
+            }
+        }
+
+        private void SaveCustomDeviceNames()
+        {
+            System.IO.File.WriteAllLines(customNamesFilePath, customDeviceNames.Select(kvp => $"{kvp.Key}|{kvp.Value}"));
+        }
+
 
         private void btnBack_Click(object sender, EventArgs e)
         {

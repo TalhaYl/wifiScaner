@@ -33,16 +33,19 @@
             flowDevices = new FlowLayoutPanel();
             labelCount = new Label();
             btnBack = new Button();
+            lblDevicesScan = new Label();
+            lblHomePage = new Label();
             SuspendLayout();
             // 
             // btnScan
             // 
             btnScan.BackgroundImage = (Image)resources.GetObject("btnScan.BackgroundImage");
             btnScan.BackgroundImageLayout = ImageLayout.Center;
+            btnScan.FlatAppearance.BorderSize = 0;
             btnScan.FlatStyle = FlatStyle.Popup;
-            btnScan.Location = new Point(47, 576);
+            btnScan.Location = new Point(47, 530);
             btnScan.Name = "btnScan";
-            btnScan.Size = new Size(63, 58);
+            btnScan.Size = new Size(92, 76);
             btnScan.TabIndex = 0;
             btnScan.UseVisualStyleBackColor = true;
             btnScan.Click += btnScan_Click;
@@ -50,7 +53,7 @@
             // flowDevices
             // 
             flowDevices.AutoScroll = true;
-            flowDevices.Location = new Point(47, 116);
+            flowDevices.Location = new Point(47, 83);
             flowDevices.Name = "flowDevices";
             flowDevices.Size = new Size(250, 441);
             flowDevices.TabIndex = 1;
@@ -58,7 +61,7 @@
             // labelCount
             // 
             labelCount.AutoSize = true;
-            labelCount.Location = new Point(47, 93);
+            labelCount.Location = new Point(47, 41);
             labelCount.Name = "labelCount";
             labelCount.Size = new Size(112, 20);
             labelCount.TabIndex = 2;
@@ -68,13 +71,33 @@
             // 
             btnBack.BackgroundImage = (Image)resources.GetObject("btnBack.BackgroundImage");
             btnBack.BackgroundImageLayout = ImageLayout.Center;
+            btnBack.FlatAppearance.BorderSize = 0;
             btnBack.FlatStyle = FlatStyle.Popup;
-            btnBack.Location = new Point(225, 576);
+            btnBack.ForeColor = SystemColors.InfoText;
+            btnBack.Location = new Point(212, 530);
             btnBack.Name = "btnBack";
-            btnBack.Size = new Size(72, 58);
+            btnBack.Size = new Size(85, 76);
             btnBack.TabIndex = 3;
             btnBack.UseVisualStyleBackColor = true;
             btnBack.Click += btnBack_Click;
+            // 
+            // lblDevicesScan
+            // 
+            lblDevicesScan.AutoSize = true;
+            lblDevicesScan.Location = new Point(47, 609);
+            lblDevicesScan.Name = "lblDevicesScan";
+            lblDevicesScan.Size = new Size(95, 20);
+            lblDevicesScan.TabIndex = 4;
+            lblDevicesScan.Text = "Devices Scan";
+            // 
+            // lblHomePage
+            // 
+            lblHomePage.AutoSize = true;
+            lblHomePage.Location = new Point(207, 609);
+            lblHomePage.Name = "lblHomePage";
+            lblHomePage.Size = new Size(90, 20);
+            lblHomePage.TabIndex = 5;
+            lblHomePage.Text = "Home Page ";
             // 
             // ConnectedDevicesForm
             // 
@@ -82,6 +105,8 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(192, 255, 255);
             ClientSize = new Size(502, 657);
+            Controls.Add(lblHomePage);
+            Controls.Add(lblDevicesScan);
             Controls.Add(btnScan);
             Controls.Add(labelCount);
             Controls.Add(btnBack);
@@ -98,5 +123,7 @@
         private FlowLayoutPanel flowDevices;
         private Label labelCount;
         private Button btnBack;
+        private Label lblDevicesScan;
+        private Label lblHomePage;
     }
 }

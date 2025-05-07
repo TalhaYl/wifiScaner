@@ -121,7 +121,7 @@
   <data name="btnWifiScan.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        DwAACw8BkvkDpQAAA7JJREFUaEPtmVmoTVEYx485maJMyTw9KWPJnKF4EA8iUyEpSjJEylhK8qK8GBIJ
+        DAAACwwBP0AiyAAAA7JJREFUaEPtmVmoTVEYx485maJMyTw9KWPJnKF4EA8iUyEpSjJEylhK8qK8GBIJ
         DzKU6UVkyhglGeOB8mDMnJn/7+z9ndZdd93LPWffc+7D/tWvs9dn773Wd/faa9gyKSkpKSkpKcnTVs6V
         e+VN+Up+lz/iY2L8G+e0ljWOEfKE/Cn//Kece1wOlyWnqzwlQw2tivwRusiSMF1+kKGG5SP3miaLymoZ
         akyh/parZGKMkTvlA/lJhiotprThvtwhR8t/0kOel6Gb1STPye4yyDD5VoYuTMJfcpccLBvJqsD5fSTd
@@ -143,7 +143,7 @@
   <data name="btnback.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        DQAACw0B7QfALAAAAk1JREFUaEPtmD1oFFEYRdefKIgIQQURFcTCQoiFNoKF2miT2sJOxNpKC8s0dpZi
+        DAAACwwBP0AiyAAAAk1JREFUaEPtmD1oFFEYRdefKIgIQQURFcTCQoiFNoKF2miT2sJOxNpKC8s0dpZi
         myY2djYRFdSYHwu1DFhoIaIiiCTgb9Rzk+8tj9VkZ8zczSzMgcPO7Lz37vdtZmcfaTUUYx8+wHtx3Jec
         wHf4O/yIp7FvWIdX8SeqgTuhjvWermlMrdmGt1FF/8JruB5V+BXMmxvEWjKEL3Gl2+gM6prGaOxhzHmC
         upb7GHvGOZxHBT/D/bgce3EaNfYLnsdE3kCunY2o2ycFjuIW7MZmvIlpno43ZeeJznMLe3ASFaRP9gKW

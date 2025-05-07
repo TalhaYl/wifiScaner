@@ -40,18 +40,20 @@
             btnWifiScan.BackColor = Color.FromArgb(192, 255, 255);
             btnWifiScan.BackgroundImage = (Image)resources.GetObject("btnWifiScan.BackgroundImage");
             btnWifiScan.BackgroundImageLayout = ImageLayout.Center;
+            btnWifiScan.FlatAppearance.BorderSize = 0;
             btnWifiScan.FlatStyle = FlatStyle.Popup;
             btnWifiScan.Location = new Point(44, 84);
             btnWifiScan.Name = "btnWifiScan";
             btnWifiScan.Size = new Size(142, 66);
             btnWifiScan.TabIndex = 0;
-            btnWifiScan.UseVisualStyleBackColor = false;
+            btnWifiScan.UseVisualStyleBackColor = true;
             btnWifiScan.Click += btnWifiScan_Click;
             // 
             // btnConnectedDevices
             // 
             btnConnectedDevices.BackgroundImage = (Image)resources.GetObject("btnConnectedDevices.BackgroundImage");
             btnConnectedDevices.BackgroundImageLayout = ImageLayout.Center;
+            btnConnectedDevices.FlatAppearance.BorderSize = 0;
             btnConnectedDevices.FlatStyle = FlatStyle.Popup;
             btnConnectedDevices.Location = new Point(44, 186);
             btnConnectedDevices.Name = "btnConnectedDevices";
