@@ -79,7 +79,6 @@
             btnBack.Size = new Size(85, 76);
             btnBack.TabIndex = 3;
             btnBack.UseVisualStyleBackColor = true;
-            btnBack.Click += btnBack_Click;
             // 
             // lblDevicesScan
             // 

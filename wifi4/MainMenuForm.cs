@@ -36,3 +36,4 @@ namespace wifi4
         }
     }
 }
+// cihazların özellikleri  isimleri yanında ikon  görüntüyü güzelleştir 

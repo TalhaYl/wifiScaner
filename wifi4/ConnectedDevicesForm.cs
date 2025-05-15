@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using wifi4;
+using System.Drawing;
 
 namespace wifi4
 {
@@ -78,7 +79,7 @@ namespace wifi4
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
-
+                
                 using (Process process = Process.Start(psi))
                 {
                     process.WaitForExit();
@@ -112,59 +113,88 @@ namespace wifi4
         {
             var panel = new Panel
             {
-                Width = 300,
-                Height = 100,
-                BackColor = System.Drawing.Color.LightGray,
-                Margin = new Padding(5),
-                Tag = mac  
+                Width = 350,
+                Height = 150,
+                BackColor = Color.WhiteSmoke,
+                Margin = new Padding(10),
+                Padding = new Padding(10),
+                BorderStyle = BorderStyle.FixedSingle
             };
 
-            var lbl = new Label
+           
+            panel.Paint += (s, e) =>
             {
-                Text = $"IP: {ip}\nMAC: {mac}\nHost: {hostname}\nÜretici: {vendor}\nAd: {name}",
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                e.Graphics.FillRectangle(new SolidBrush(Color.LightGray), 0, 0, panel.Width, panel.Height);
+            };
+
+            var lblInfo = new Label
+            {
+                Text = $"🖧 IP: {ip}\n🔗 MAC: {mac}\n🌐 Host: {hostname}\n🏷️ Üretici: {vendor}\n📛 Ad: {name}",
+                Font = new Font("Segoe UI", 10),
                 AutoSize = true
             };
 
-            
+            panel.Controls.Add(lblInfo);
+
             panel.DoubleClick += (sender, e) => RenameDevice(panel, mac, name);
 
-            panel.Controls.Add(lbl);
             flowDevices.Controls.Add(panel);
         }
 
         private void RenameDevice(Panel panel, string mac, string currentName)
         {
-            
-            string newName = Microsoft.VisualBasic.Interaction.InputBox(
-                $"Cihaz için yeni isim girin (MAC: {mac}):",
-                "Cihaz İsmi Değiştir",
-                currentName);
-
-            if (!string.IsNullOrWhiteSpace(newName) && newName != currentName)
+           
+            var inputBox = new TextBox
             {
-                
-                customDeviceNames[mac] = newName;
-                SaveCustomDeviceNames();
+                Text = currentName,
+                Font = new Font("Segoe UI", 10),
+                Width = 300,
+                Margin = new Padding(5)
+            };
 
-                
-                var lbl = (Label)panel.Controls[0];
-                lbl.Text = lbl.Text.Replace($"Ad: {currentName}", $"Ad: {newName}");
+            var dialog = new Form
+            {
+                Width = 350,
+                Height = 150,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                StartPosition = FormStartPosition.CenterParent,
+                Text = "Cihaz İsmi Değiştir"
+            };
 
-                MessageBox.Show("Cihaz adı başarıyla güncellendi!");
+            var btnSave = new Button
+            {
+                Text = "Kaydet",
+                Width = 100,
+                Height = 40,
+                Margin = new Padding(5),
+                DialogResult = DialogResult.OK
+            };
+
+            dialog.Controls.Add(inputBox);
+            dialog.Controls.Add(btnSave);
+            dialog.AcceptButton = btnSave;
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                string newName = inputBox.Text.Trim();
+
+                if (!string.IsNullOrWhiteSpace(newName) && newName != currentName)
+                {
+                    customDeviceNames[mac] = newName;
+                    SaveCustomDeviceNames();
+
+                    var lbl = (Label)panel.Controls[0];
+                    lbl.Text = lbl.Text.Replace($"📛 Ad: {currentName}", $"📛 Ad: {newName}");
+
+                    MessageBox.Show("Cihaz adı başarıyla güncellendi!");
+                }
             }
         }
 
         private void SaveCustomDeviceNames()
         {
             System.IO.File.WriteAllLines(customNamesFilePath, customDeviceNames.Select(kvp => $"{kvp.Key}|{kvp.Value}"));
-        }
-
-
-        private void btnBack_Click(object sender, EventArgs e)
-        {
-            var menu = new MainMenuForm();
-            menu.Show();
-            this.Close();
         }
 
         private void LoadCustomDeviceNames()
@@ -178,7 +208,5 @@ namespace wifi4
                     customDeviceNames[parts[0]] = parts[1];
             }
         }
-
-        
     }
 }
