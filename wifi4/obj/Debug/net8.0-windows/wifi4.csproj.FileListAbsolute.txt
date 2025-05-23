@@ -18,3 +18,4 @@ C:\Users\TALHA\source\repos\wifi4\wifi4\obj\Debug\net8.0-windows\ref\wifi4.dll
 C:\Users\TALHA\source\repos\wifi4\wifi4\obj\Debug\net8.0-windows\wifi4.FormWifiNetworks.resources
 C:\Users\TALHA\source\repos\wifi4\wifi4\obj\Debug\net8.0-windows\wifi4.g.resources
 C:\Users\TALHA\source\repos\wifi4\wifi4\obj\Debug\net8.0-windows\wifi4.Properties.Resources.resources
+C:\Users\TALHA\source\repos\wifi4\wifi4\obj\Debug\net8.0-windows\wifi4.DeviceInfoForm.resources

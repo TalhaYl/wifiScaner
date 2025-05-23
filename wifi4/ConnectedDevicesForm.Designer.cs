@@ -42,8 +42,8 @@
             btnScan.BackgroundImage = (Image)resources.GetObject("btnScan.BackgroundImage");
             btnScan.BackgroundImageLayout = ImageLayout.Center;
             btnScan.FlatAppearance.BorderSize = 0;
-            btnScan.FlatStyle = FlatStyle.Popup;
-            btnScan.Location = new Point(47, 530);
+            btnScan.FlatStyle = FlatStyle.Flat;
+            btnScan.Location = new Point(12, 530);
             btnScan.Name = "btnScan";
             btnScan.Size = new Size(92, 76);
             btnScan.TabIndex = 0;
@@ -53,65 +53,73 @@
             // flowDevices
             // 
             flowDevices.AutoScroll = true;
-            flowDevices.Location = new Point(47, 83);
+            flowDevices.BackColor = Color.FromArgb(240, 240, 240);
+            flowDevices.Location = new Point(12, 58);
             flowDevices.Name = "flowDevices";
-            flowDevices.Size = new Size(250, 441);
+            flowDevices.Padding = new Padding(10);
+            flowDevices.Size = new Size(337, 466);
             flowDevices.TabIndex = 1;
             // 
             // labelCount
             // 
             labelCount.AutoSize = true;
-            labelCount.Location = new Point(47, 41);
+            labelCount.Font = new Font("Segoe UI", 12F);
+            labelCount.Location = new Point(12, 18);
             labelCount.Name = "labelCount";
-            labelCount.Size = new Size(112, 20);
+            labelCount.Size = new Size(148, 28);
             labelCount.TabIndex = 2;
-            labelCount.Text = "Total Devices :0";
+            labelCount.Text = "Toplam Cihaz: 0";
             // 
             // btnBack
             // 
             btnBack.BackgroundImage = (Image)resources.GetObject("btnBack.BackgroundImage");
             btnBack.BackgroundImageLayout = ImageLayout.Center;
             btnBack.FlatAppearance.BorderSize = 0;
-            btnBack.FlatStyle = FlatStyle.Popup;
-            btnBack.ForeColor = SystemColors.InfoText;
-            btnBack.Location = new Point(212, 530);
+            btnBack.FlatStyle = FlatStyle.Flat;
+            btnBack.Location = new Point(207, 530);
             btnBack.Name = "btnBack";
-            btnBack.Size = new Size(85, 76);
+            btnBack.Size = new Size(92, 76);
             btnBack.TabIndex = 3;
             btnBack.UseVisualStyleBackColor = true;
+            btnBack.Click += btnBack_Click;
             // 
             // lblDevicesScan
             // 
             lblDevicesScan.AutoSize = true;
-            lblDevicesScan.Location = new Point(47, 609);
+            lblDevicesScan.Font = new Font("Segoe UI", 9F);
+            lblDevicesScan.Location = new Point(7, 609);
             lblDevicesScan.Name = "lblDevicesScan";
-            lblDevicesScan.Size = new Size(95, 20);
+            lblDevicesScan.Size = new Size(97, 20);
             lblDevicesScan.TabIndex = 4;
-            lblDevicesScan.Text = "Devices Scan";
+            lblDevicesScan.Text = "Cihazları Tara";
             // 
             // lblHomePage
             // 
             lblHomePage.AutoSize = true;
-            lblHomePage.Location = new Point(207, 609);
+            lblHomePage.Font = new Font("Segoe UI", 9F);
+            lblHomePage.Location = new Point(224, 609);
             lblHomePage.Name = "lblHomePage";
-            lblHomePage.Size = new Size(90, 20);
+            lblHomePage.Size = new Size(75, 20);
             lblHomePage.TabIndex = 5;
-            lblHomePage.Text = "Home Page ";
+            lblHomePage.Text = "Ana Sayfa";
             // 
             // ConnectedDevicesForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(192, 255, 255);
-            ClientSize = new Size(502, 657);
+            BackColor = Color.FromArgb(240, 240, 240);
+            ClientSize = new Size(361, 638);
             Controls.Add(lblHomePage);
             Controls.Add(lblDevicesScan);
             Controls.Add(btnScan);
             Controls.Add(labelCount);
             Controls.Add(btnBack);
             Controls.Add(flowDevices);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "ConnectedDevicesForm";
-            Text = "ConnectedDevicesForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Bağlı Cihazlar";
             ResumeLayout(false);
             PerformLayout();
         }

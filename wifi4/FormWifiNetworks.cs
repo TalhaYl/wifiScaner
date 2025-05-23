@@ -4,20 +4,105 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace wifi4
 {
     public partial class FormWifiNetworks : Form
     {
+        private Color primaryColor = Color.FromArgb(0, 122, 204);
+        private Color secondaryColor = Color.FromArgb(240, 240, 240);
+        private Color accentColor = Color.FromArgb(0, 122, 204);
+        private Font titleFont = new Font("Segoe UI", 12F, FontStyle.Bold);
+        private Font normalFont = new Font("Segoe UI", 9F);
+        private Font smallFont = new Font("Segoe UI", 9F);
+
         public FormWifiNetworks()
         {
             InitializeComponent();
+            SetupForm();
+        }
+
+        private void SetupForm()
+        {
+            // Form ayarları
+            this.BackColor = Color.White;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.StartPosition = FormStartPosition.CenterScreen;
+            this.Text = "WiFi Ağları";
+            this.Size = new Size(355, 618);
+            this.Padding = new Padding(10);
+
+            // ListView ayarları
+            listViewWifiNetworks.View = View.Details;
+            listViewWifiNetworks.FullRowSelect = true;
+            listViewWifiNetworks.GridLines = false;
+            listViewWifiNetworks.BackColor = Color.White;
+            listViewWifiNetworks.Font = normalFont;
+            listViewWifiNetworks.BorderStyle = BorderStyle.None;
+            listViewWifiNetworks.Location = new Point(22, 60);
+            listViewWifiNetworks.Size = new Size(311, 434);
+            listViewWifiNetworks.Columns[0].Width = 150;
+            listViewWifiNetworks.Columns[1].Width = 80;
+            listViewWifiNetworks.Columns[2].Width = 80;
+
+            // Özel ListView çizimi
+            listViewWifiNetworks.DrawItem += (s, e) => {
+                e.DrawDefault = true;
+                if (e.Item != null)
+                {
+                    e.Item.BackColor = e.ItemIndex % 2 == 0 ? Color.White : Color.FromArgb(250, 250, 250);
+                }
+            };
+
+            // Label ayarları
+            labelNetworkCount.Font = titleFont;
+            labelNetworkCount.ForeColor = primaryColor;
+            labelNetworkCount.Location = new Point(22, 20);
+            labelNetworkCount.Text = "Toplam Ağ: 0";
+
+            lblScan.Font = smallFont;
+            lblScan.ForeColor = Color.FromArgb(100, 100, 100);
+            lblScan.Location = new Point(24, 589);
+            lblScan.Text = "Ağları Tara";
+
+            lblHomePage.Font = smallFont;
+            lblHomePage.ForeColor = Color.FromArgb(100, 100, 100);
+            lblHomePage.Location = new Point(260, 589);
+            lblHomePage.Text = "Ana Sayfa";
+
+            // Buton ayarları
+            btnWifiScan.BackColor = Color.White;
+            btnWifiScan.ForeColor = Color.White;
+            btnWifiScan.FlatStyle = FlatStyle.Flat;
+            btnWifiScan.FlatAppearance.BorderSize = 0;
+            btnWifiScan.Font = normalFont;
+            btnWifiScan.Location = new Point(22, 500);
+            btnWifiScan.Size = new Size(73, 86);
+            btnWifiScan.Cursor = Cursors.Hand;
+
+            btnback.BackColor = Color.White;
+            btnback.ForeColor = Color.White;
+            btnback.FlatStyle = FlatStyle.Flat;
+            btnback.FlatAppearance.BorderSize = 0;
+            btnback.Font = normalFont;
+            btnback.Location = new Point(260, 500);
+            btnback.Size = new Size(73, 86);
+            btnback.Cursor = Cursors.Hand;
+
+            // Hover efektleri
+            btnWifiScan.MouseEnter += (s, e) => btnWifiScan.BackColor = Color.FromArgb(240, 240, 240);
+            btnWifiScan.MouseLeave += (s, e) => btnWifiScan.BackColor = Color.White;
+
+            btnback.MouseEnter += (s, e) => btnback.BackColor = Color.FromArgb(240, 240, 240);
+            btnback.MouseLeave += (s, e) => btnback.BackColor = Color.White;
         }
 
         private void btnScanWifi_Click(object sender, EventArgs e)
         {
-            listViewWifiNetworks.Items.Clear();  // ListView'i temizle
+            listViewWifiNetworks.Items.Clear();
             labelNetworkCount.Text = "WiFi taraması yapılıyor...";
 
             try
@@ -52,21 +137,19 @@ namespace wifi4
                     }
                 }
 
-                // Son SSID'yi de ekle
                 if (!string.IsNullOrEmpty(ssid))
                     networks.Add($"{ssid} - {signal} - {security}");
 
-                // ListView'e ekleme
                 foreach (var net in networks.Distinct())
                 {
                     var parts = net.Split('-');
-                    ListViewItem item = new ListViewItem(parts[0].Trim()); // SSID
-                    item.SubItems.Add(parts[1].Trim()); // Sinyal
-                    item.SubItems.Add(parts[2].Trim()); // Güvenlik
+                    ListViewItem item = new ListViewItem(parts[0].Trim());
+                    item.SubItems.Add(parts[1].Trim());
+                    item.SubItems.Add(parts[2].Trim());
                     listViewWifiNetworks.Items.Add(item);
                 }
 
-                labelNetworkCount.Text = $"Görünen Ağ Sayısı: {networks.Count}";
+                labelNetworkCount.Text = $"Toplam Ağ: {networks.Count}";
             }
             catch (Exception ex)
             {
@@ -92,10 +175,21 @@ namespace wifi4
         {
             MainMenuForm mainMenu = new MainMenuForm();
             mainMenu.Show();
-            this.Close(); // Bu formu kapat
+            this.Close();
         }
 
-       
-    }
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+           
+            if (this is MainMenuForm)
+            {
+                Application.Exit();
+            }
+            else
+            {
+                base.OnFormClosing(e);
+            }
+        }
 
+    }
 }
