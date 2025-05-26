@@ -19,10 +19,6 @@ namespace wifi4
     {
         private Dictionary<string, string> customDeviceNames = new Dictionary<string, string>();
         private string customNamesFilePath = "custom_device_names.txt";
-        private PictureBox loadingSpinner;
-        private PictureBox countSpinner;
-        private System.Windows.Forms.Timer spinnerTimer;
-        private System.Windows.Forms.Timer countSpinnerTimer;
         private int deviceCount = 0;
 
         public ConnectedDevicesForm()
@@ -30,107 +26,9 @@ namespace wifi4
             InitializeComponent();
             LoadMacVendorCache();
             this.BackColor = Color.FromArgb(240, 240, 240);
-            InitializeLoadingSpinner();
-        }
-
-        private void InitializeLoadingSpinner()
-        {
-            // Ana loading spinner (ekran ortasında)
-            loadingSpinner = new PictureBox
-            {
-                Size = new Size(40, 40),
-                Location = new Point((this.Width - 40) / 2, (this.Height - 40) / 2),
-                Visible = false,
-                BackColor = Color.White
-            };
-
-            // Sayı yanındaki küçük spinner
-            countSpinner = new PictureBox
-            {
-                Size = new Size(24, 24),
-                Location = new Point(labelCount.Right + 10, labelCount.Top + 2),
-                Visible = false,
-                BackColor = Color.White,
-            };
-
-            // Ana spinner timer'ı
-            spinnerTimer = new System.Windows.Forms.Timer();
-            spinnerTimer.Interval = 50;
-            int angle = 0;
-
-            spinnerTimer.Tick += (s, e) =>
-            {
-                angle = (angle + 10) % 360;
-                loadingSpinner.Invalidate();
-            };
-
-            loadingSpinner.Paint += (s, e) =>
-            {
-                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                e.Graphics.Clear(Color.White); // Arka planı şeffaf temizle
-
-                e.Graphics.TranslateTransform(loadingSpinner.Width / 2, loadingSpinner.Height / 2);
-                e.Graphics.RotateTransform(angle);
-
-                using (Pen pen = new Pen(Color.FromArgb(0, 120, 215), 3))
-                {
-                    // Ana daire
-                    e.Graphics.DrawEllipse(pen, -15, -15, 30, 30);
-
-                    // Dönen kuyruk
-                    for (int i = 0; i < 4; i++)
-                    {
-                        e.Graphics.RotateTransform(90);
-                        float alpha = 1.0f - (i * 0.25f);
-                        pen.Color = Color.FromArgb((int)(255 * alpha), 0, 120, 215);
-                        e.Graphics.DrawArc(pen, -15, -15, 30, 30, 0, 90);
-                    }
-                }
-            };
-
-            // Count spinner timer'ı
-            countSpinnerTimer = new System.Windows.Forms.Timer();
-            countSpinnerTimer.Interval = 50;
-            int countAngle = 0;
-
-            countSpinnerTimer.Tick += (s, e) =>
-            {
-                countAngle = (countAngle + 10) % 360;
-                countSpinner.Invalidate();
-            };
-
-            countSpinner.Paint += (s, e) =>
-            {
-                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                e.Graphics.Clear(Color.White); // Arka planı şeffaf temizle
-
-                e.Graphics.TranslateTransform(countSpinner.Width / 2, countSpinner.Height / 2);
-                e.Graphics.RotateTransform(countAngle);
-
-                using (Pen pen = new Pen(Color.FromArgb(0, 120, 215), 2))
-                {
-                    // Ana daire
-                    e.Graphics.DrawEllipse(pen, -9, -9, 18, 18);
-
-                    // Dönen kuyruk
-                    for (int i = 0; i < 4; i++)
-                    {
-                        e.Graphics.RotateTransform(90);
-                        float alpha = 1.0f - (i * 0.25f);
-                        pen.Color = Color.FromArgb((int)(255 * alpha), 0, 120, 215);
-                        e.Graphics.DrawArc(pen, -9, -9, 18, 18, 0, 90);
-                    }
-                }
-            };
-
-            this.Controls.Add(loadingSpinner);
-            this.Controls.Add(countSpinner);
-
-            // Ensure spinners are on top and handle transparency better
-            loadingSpinner.Parent = this;
-            loadingSpinner.BringToFront();
-            countSpinner.Parent = this;
-            countSpinner.BringToFront();
+            // Spinner GIF resource atama
+            loadingSpinner.Image = Properties.Resources.loading;
+            countSpinner.Image = Properties.Resources.loading;
         }
 
         private void ShowLoadingSpinner()
@@ -138,13 +36,11 @@ namespace wifi4
             loadingSpinner.Visible = true;
             loadingSpinner.Location = new Point((this.Width - loadingSpinner.Width) / 2, (this.Height - loadingSpinner.Height) / 2);
             loadingSpinner.BringToFront();
-            spinnerTimer.Start();
         }
 
         private void HideLoadingSpinner()
         {
             loadingSpinner.Visible = false;
-            spinnerTimer.Stop();
         }
 
         private void ShowCountSpinner()
@@ -152,13 +48,11 @@ namespace wifi4
             countSpinner.Visible = true;
             countSpinner.Location = new Point(labelCount.Right + 10, labelCount.Top + 2);
             countSpinner.BringToFront();
-            countSpinnerTimer.Start();
         }
 
         private void HideCountSpinner()
         {
             countSpinner.Visible = false;
-            countSpinnerTimer.Stop();
         }
 
         private async void btnScan_Click(object sender, EventArgs e)

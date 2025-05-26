@@ -7,6 +7,8 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace wifi4
 {
@@ -51,87 +53,59 @@ namespace wifi4
             {
                 Size = new Size(40, 40),
                 Location = new Point(20, 380),
-                Visible = false
+                Visible = false,
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Image = Image.FromFile("Resources/loading.gif")
             };
-
-            System.Windows.Forms.Timer spinnerTimer = new System.Windows.Forms.Timer();
-            spinnerTimer.Interval = 50;
-            int angle = 0;
-
-            spinnerTimer.Tick += (s, e) =>
-            {
-                angle = (angle + 10) % 360;
-                loadingSpinner.Invalidate();
-            };
-
-            loadingSpinner.Paint += (s, e) =>
-            {
-                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                e.Graphics.TranslateTransform(loadingSpinner.Width / 2, loadingSpinner.Height / 2);
-                e.Graphics.RotateTransform(angle);
-
-                using (Pen pen = new Pen(Color.FromArgb(0, 120, 215), 3))
-                {
-                    // Ana daire
-                    e.Graphics.DrawEllipse(pen, -15, -15, 30, 30);
-
-                    // Dönen kuyruk
-                    for (int i = 0; i < 4; i++)
-                    {
-                        e.Graphics.RotateTransform(90);
-                        float alpha = 1.0f - (i * 0.25f);
-                        pen.Color = Color.FromArgb((int)(255 * alpha), 0, 120, 215);
-                        e.Graphics.DrawArc(pen, -15, -15, 30, 30, 0, 90);
-                    }
-                }
-            };
-
             this.Controls.Add(loadingSpinner);
-            spinnerTimer.Start();
         }
 
         private async Task<List<int>> ScanOpenPortsAsync(string ip)
         {
             List<int> openPorts = new List<int>();
-            int[] commonPorts = { 21, 22, 23, 25, 53, 80, 110, 143, 443, 445, 3306, 3389, 8080 };
-
-            foreach (int port in commonPorts)
+            
+            try
             {
-                try
+                // Nmap komutunu oluştur
+                string nmapCommand = $"-sS -sV -p- --min-rate=1000 -T4 {ip}";
+                
+                // Nmap'i çalıştır
+                using (Process process = new Process())
                 {
-                    using (TcpClient client = new TcpClient())
+                    process.StartInfo.FileName = "nmap";
+                    process.StartInfo.Arguments = nmapCommand;
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.CreateNoWindow = true;
+
+                    process.Start();
+                    string output = await process.StandardOutput.ReadToEndAsync();
+                    await process.WaitForExitAsync();
+
+                    // Nmap çıktısını işle
+                    var portMatches = Regex.Matches(output, @"(\d+)/tcp\s+open\s+(\w+)");
+                    foreach (Match match in portMatches)
                     {
-                        var connectTask = client.ConnectAsync(ip, port);
-                        if (await Task.WhenAny(connectTask, Task.Delay(100)) == connectTask)
+                        if (int.TryParse(match.Groups[1].Value, out int port))
                         {
                             openPorts.Add(port);
                         }
                     }
                 }
-                catch { }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Port tarama hatası: {ex.Message}\n\nNmap'in yüklü olduğundan emin olun.", 
+                    "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
             return openPorts;
         }
 
         private string GetPortService(int port)
         {
-            switch (port)
-            {
-                case 21: return "FTP";
-                case 22: return "SSH";
-                case 23: return "Telnet";
-                case 25: return "SMTP";
-                case 53: return "DNS";
-                case 80: return "HTTP";
-                case 110: return "POP3";
-                case 143: return "IMAP";
-                case 443: return "HTTPS";
-                case 445: return "SMB";
-                case 3306: return "MySQL";
-                case 3389: return "RDP";
-                case 8080: return "HTTP-Alt";
-                default: return "Unknown";
-            }
+            // Nmap'in tespit ettiği servis bilgisini kullan
+            return "Taranıyor...";
         }
 
         private async Task CreateVCardPanel(string deviceName, string ip, string mac, string vendor, string hostname, string connectionType, string deviceType)

@@ -19,3 +19,7 @@ C:\Users\TALHA\source\repos\wifi4\wifi4\obj\Debug\net8.0-windows\wifi4.FormWifiN
 C:\Users\TALHA\source\repos\wifi4\wifi4\obj\Debug\net8.0-windows\wifi4.g.resources
 C:\Users\TALHA\source\repos\wifi4\wifi4\obj\Debug\net8.0-windows\wifi4.Properties.Resources.resources
 C:\Users\TALHA\source\repos\wifi4\wifi4\obj\Debug\net8.0-windows\wifi4.DeviceInfoForm.resources
+C:\Users\TALHA\source\repos\wifi4\wifi4\bin\Debug\net8.0-windows\PacketDotNet.dll
+C:\Users\TALHA\source\repos\wifi4\wifi4\bin\Debug\net8.0-windows\SharpPcap.dll
+C:\Users\TALHA\source\repos\wifi4\wifi4\obj\Debug\net8.0-windows\wifi4.csproj.AssemblyReference.cache
+C:\Users\TALHA\source\repos\wifi4\wifi4\obj\Debug\net8.0-windows\wifi4.csproj.Up2Date

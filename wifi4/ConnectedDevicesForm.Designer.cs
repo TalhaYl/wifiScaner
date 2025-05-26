@@ -35,6 +35,8 @@
             btnBack = new Button();
             lblDevicesScan = new Label();
             lblHomePage = new Label();
+            this.loadingSpinner = new System.Windows.Forms.PictureBox();
+            this.countSpinner = new System.Windows.Forms.PictureBox();
             SuspendLayout();
             // 
             // btnScan
@@ -103,6 +105,22 @@
             lblHomePage.TabIndex = 5;
             lblHomePage.Text = "Ana Sayfa";
             // 
+            // loadingSpinner
+            // 
+            this.loadingSpinner.Location = new System.Drawing.Point(20, 380);
+            this.loadingSpinner.Name = "loadingSpinner";
+            this.loadingSpinner.Size = new System.Drawing.Size(40, 40);
+            this.loadingSpinner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.loadingSpinner.Visible = false;
+            // 
+            // countSpinner
+            // 
+            this.countSpinner.Location = new System.Drawing.Point(200, 20);
+            this.countSpinner.Name = "countSpinner";
+            this.countSpinner.Size = new System.Drawing.Size(30, 30);
+            this.countSpinner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.countSpinner.Visible = false;
+            // 
             // ConnectedDevicesForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -115,6 +133,8 @@
             Controls.Add(labelCount);
             Controls.Add(btnBack);
             Controls.Add(flowDevices);
+            Controls.Add(this.loadingSpinner);
+            Controls.Add(this.countSpinner);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "ConnectedDevicesForm";
@@ -132,5 +152,7 @@
         private Button btnBack;
         private Label lblDevicesScan;
         private Label lblHomePage;
+        private System.Windows.Forms.PictureBox loadingSpinner;
+        private System.Windows.Forms.PictureBox countSpinner;
     }
 }
