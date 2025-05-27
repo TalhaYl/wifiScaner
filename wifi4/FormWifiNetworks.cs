@@ -22,6 +22,9 @@ namespace wifi4
         {
             InitializeComponent();
             SetupForm();
+            SetHoverBorder(btnWifiScan);
+            SetHoverBorder(btnback);
+
         }
 
         private void SetupForm()
@@ -65,12 +68,12 @@ namespace wifi4
 
             lblScan.Font = smallFont;
             lblScan.ForeColor = Color.FromArgb(100, 100, 100);
-            lblScan.Location = new Point(24, 589);
+            lblScan.Location = new Point(26, 480);
             lblScan.Text = "Ağları Tara";
 
             lblHomePage.Font = smallFont;
             lblHomePage.ForeColor = Color.FromArgb(100, 100, 100);
-            lblHomePage.Location = new Point(260, 589);
+            lblHomePage.Location = new Point(265, 480);
             lblHomePage.Text = "Ana Sayfa";
 
             // Buton ayarları
@@ -80,7 +83,7 @@ namespace wifi4
             btnWifiScan.FlatAppearance.BorderSize = 0;
             btnWifiScan.Font = normalFont;
             btnWifiScan.Location = new Point(22, 500);
-            btnWifiScan.Size = new Size(73, 86);
+            btnWifiScan.Size = new Size(70, 70);
             btnWifiScan.Cursor = Cursors.Hand;
 
             btnback.BackColor = Color.White;
@@ -89,15 +92,25 @@ namespace wifi4
             btnback.FlatAppearance.BorderSize = 0;
             btnback.Font = normalFont;
             btnback.Location = new Point(260, 500);
-            btnback.Size = new Size(73, 86);
+            btnback.Size = new Size(70, 70);
             btnback.Cursor = Cursors.Hand;
+           }
+        private void SetHoverBorder(Button button)
+        {
+            button.FlatAppearance.BorderSize = 0;
+            button.FlatAppearance.BorderColor = this.BackColor;
 
-            // Hover efektleri
-            btnWifiScan.MouseEnter += (s, e) => btnWifiScan.BackColor = Color.FromArgb(240, 240, 240);
-            btnWifiScan.MouseLeave += (s, e) => btnWifiScan.BackColor = Color.White;
+            button.MouseEnter += (s, e) =>
+            {
+                button.FlatAppearance.BorderSize = 2;
+                button.FlatAppearance.BorderColor = Color.SteelBlue; // İstediğin rengi kullanabilirsin
+            };
 
-            btnback.MouseEnter += (s, e) => btnback.BackColor = Color.FromArgb(240, 240, 240);
-            btnback.MouseLeave += (s, e) => btnback.BackColor = Color.White;
+            button.MouseLeave += (s, e) =>
+            {
+                button.FlatAppearance.BorderSize = 0;
+                button.FlatAppearance.BorderColor = this.BackColor;
+            };
         }
 
         private void btnScanWifi_Click(object sender, EventArgs e)

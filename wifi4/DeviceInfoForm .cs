@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Windows.Forms;
 using System.Linq;
+using System.Threading.Tasks;
 
 #nullable enable
 
@@ -18,9 +19,14 @@ namespace wifi4
         private string deviceName;
         private string deviceIp;
         private Panel? cardPanel;
+        private Label? lblPortsValue;
 
         public DeviceInfoForm(string deviceName, string ip, string mac, string vendor, string hostname, string connectionType, string deviceType)
         {
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string dir = Path.Combine(appData, "wifi4");
+            Directory.CreateDirectory(dir);
+            customNamesFilePath = Path.Combine(dir, "custom_device_names.txt");
             InitializeComponent();
 
             LoadCustomDeviceNames();
@@ -32,18 +38,35 @@ namespace wifi4
             this.BackColor = Color.White;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.StartPosition = FormStartPosition.CenterParent;
-            this.ClientSize = new Size(400, 450);
+            this.Size = new Size(355, 618);
+            this.MinimumSize = new Size(355, 618);
 
+            string normMac = deviceMac.Replace(":", "-").ToUpper();
+            if (customDeviceNames.TryGetValue(normMac, out var savedName))
+            {
+                this.deviceName = savedName;
+            }
             CreateVCardPanel(deviceName, ip, mac, vendor, hostname, connectionType, deviceType);
+            if (cardPanel == null)
+            {
+                throw new InvalidOperationException("Card panel was not initialized.");
+            }
         }
 
         private void CreateVCardPanel(string deviceName, string ip, string mac, string vendor, string hostname, string connectionType, string deviceType)
         {
+            int formWidth = this.ClientSize.Width;
+            int formHeight = this.ClientSize.Height;
+            int cardMargin = 20;
+            int cardWidth = formWidth - 2 * cardMargin;
+            int cardHeight = formHeight - 40;
+
             cardPanel = new Panel
             {
-                Size = new Size(360, 380),
-                Location = new Point(20, 20),
-                BackColor = Color.White
+                Size = new Size(cardWidth, cardHeight),
+                Location = new Point(cardMargin, 20),
+                BackColor = Color.White,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom
             };
             this.Controls.Add(cardPanel);
 
@@ -76,7 +99,7 @@ namespace wifi4
 
             Panel headerPanel = new Panel
             {
-                Size = new Size(360, 100),
+                Size = new Size(cardWidth, 100),
                 Location = new Point(0, 0),
                 BackColor = Color.FromArgb(0, 123, 255)
             };
@@ -137,7 +160,7 @@ namespace wifi4
             // Device Name Panel
             Panel deviceNamePanel = new Panel
             {
-                Size = new Size(180, 30),
+                Size = new Size(cardWidth - 140, 30),
                 Location = new Point(95, 20),
                 BackColor = Color.Transparent
             };
@@ -154,7 +177,7 @@ namespace wifi4
 
             Label lblDeviceName = new Label
             {
-                Text = deviceName,
+                Text = this.deviceName,
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 AutoSize = false,
                 Size = deviceNamePanel.Size,
@@ -168,7 +191,7 @@ namespace wifi4
             // MAC Address Panel
             Panel macPanel = new Panel
             {
-                Size = new Size(180, 25),
+                Size = new Size(cardWidth - 140, 25),
                 Location = new Point(95, 55),
                 BackColor = Color.Transparent
             };
@@ -198,9 +221,10 @@ namespace wifi4
 
             Panel contentPanel = new Panel
             {
-                Size = new Size(360, 280),
+                Size = new Size(cardWidth, cardHeight - 180),
                 Location = new Point(0, 100),
-                BackColor = Color.White
+                BackColor = Color.White,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom
             };
             cardPanel.Controls.Add(contentPanel);
 
@@ -210,45 +234,191 @@ namespace wifi4
             CreateInfoRow(contentPanel, "🌐", "Bağlantı", connectionType, 125);
             CreateInfoRow(contentPanel, "📱", "Cihaz Türü", deviceType, 160);
 
-            Button btnRename = new Button
+            // Açık Portlar butonu ve sonuç label'ı üstte OLMAYACAK, bunun yerine alt satırda olacak
+            // Alt butonlar ve port tarama butonu için ortak değişkenler
+            int buttonWidth = 90;
+            int buttonHeight = 36;
+            int buttonSpacing = 20;
+            int totalButtonWidth = buttonWidth * 3 + buttonSpacing * 2;
+            int startX = (cardWidth - totalButtonWidth) / 2;
+            int buttonY = cardPanel.Height - buttonHeight - 20;
+
+            // Ping info row
+            Label lblPingValue = null;
+            int pingRowY = 195;
+            {
+                Label lblIcon = new Label
+                {
+                    Text = "📶",
+                    Font = new Font("Segoe UI Symbol", 14),
+                    ForeColor = Color.FromArgb(0, 123, 255),
+                    AutoSize = true,
+                    Location = new Point(20, pingRowY)
+                };
+                contentPanel.Controls.Add(lblIcon);
+
+                Label lblLabel = new Label
+                {
+                    Text = "Ping:",
+                    Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(100, 100, 100),
+                    AutoSize = true,
+                    Location = new Point(50, pingRowY + 3)
+                };
+                contentPanel.Controls.Add(lblLabel);
+
+                lblPingValue = new Label
+                {
+                    Text = "-",
+                    Font = new Font("Segoe UI", 9),
+                    ForeColor = Color.FromArgb(60, 60, 60),
+                    AutoSize = true,
+                    Location = new Point(155, pingRowY + 3)
+                };
+                contentPanel.Controls.Add(lblPingValue);
+            }
+
+            // Açık Portlar satırı (ping satırının hemen altında)
+            int portsRowY = pingRowY + 35;
+            Label lblPortsValueLocal = new Label
+            {
+                Text = "-",
+                Font = new Font("Segoe UI", 9),
+                ForeColor = Color.FromArgb(60, 60, 60),
+                AutoSize = true,
+                Location = new Point(155, portsRowY + 3)
+            };
+            // Icon
+            Label lblPortsIcon = new Label
+            {
+                Text = "🛡️",
+                Font = new Font("Segoe UI Symbol", 14),
+                ForeColor = Color.FromArgb(0, 123, 255),
+                AutoSize = true,
+                Location = new Point(20, portsRowY)
+            };
+            contentPanel.Controls.Add(lblPortsIcon);
+            // Label
+            Label lblPortsLabel = new Label
+            {
+                Text = "Açık Portlar:",
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                ForeColor = Color.FromArgb(100, 100, 100),
+                AutoSize = true,
+                Location = new Point(50, portsRowY + 3)
+            };
+            contentPanel.Controls.Add(lblPortsLabel);
+            contentPanel.Controls.Add(lblPortsValueLocal);
+            lblPortsValue = lblPortsValueLocal;
+
+            // Alt butonlar (Ping, İsim Değiştir, Açık Portlar)
+            var btnPing = new Button
+            {
+                Text = "Ping",
+                Size = new Size(buttonWidth, buttonHeight),
+                Location = new Point(startX, buttonY),
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                BackColor = Color.FromArgb(0, 123, 255),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnPing.FlatAppearance.BorderSize = 0;
+            cardPanel.Controls.Add(btnPing);
+
+            var btnRename = new Button
             {
                 Text = "İsim Değiştir",
-                Size = new Size(150, 40),
-                Location = new Point(105, 240),
+                Size = new Size(buttonWidth, buttonHeight),
+                Location = new Point(startX + buttonWidth + buttonSpacing, buttonY),
                 FlatStyle = FlatStyle.Flat,
                 BackColor = Color.FromArgb(0, 123, 255),
                 ForeColor = Color.White,
-                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
                 Cursor = Cursors.Hand
             };
             btnRename.FlatAppearance.BorderSize = 0;
-            btnRename.Paint += (sender, e) =>
-            {
-                if (sender is Button btn)
-                {
-                    Rectangle rect = new Rectangle(0, 0, btn.Width, btn.Height);
+            cardPanel.Controls.Add(btnRename);
 
-                    using (GraphicsPath path = CreateRoundedRectangle(rect, 20))
+            var btnScanPorts = new Button
+            {
+                Text = "Açık Portlar",
+                Size = new Size(buttonWidth, buttonHeight),
+                Location = new Point(startX + 2 * (buttonWidth + buttonSpacing), buttonY),
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Color.FromArgb(0, 123, 255),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Cursor = Cursors.Hand
+            };
+            btnScanPorts.FlatAppearance.BorderSize = 0;
+            cardPanel.Controls.Add(btnScanPorts);
+
+            btnRename.Click += BtnRename_Click;
+
+            btnPing.Click += async (s, e) =>
+            {
+                lblPingValue.Text = "Ping atılıyor...";
+                await Task.Delay(400);
+                try
+                {
+                    using (var ping = new System.Net.NetworkInformation.Ping())
                     {
-                        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                        using (SolidBrush brush = new SolidBrush(btn.BackColor))
+                        var reply = await ping.SendPingAsync(ip, 1000);
+                        if (reply.Status == System.Net.NetworkInformation.IPStatus.Success)
                         {
-                            e.Graphics.FillPath(brush, path);
+                            lblPingValue.Text = $"Başarılı: {reply.RoundtripTime} ms";
+                        }
+                        else
+                        {
+                            lblPingValue.Text = "Başarısız";
                         }
                     }
-
-                    StringFormat sf = new StringFormat();
-                    sf.Alignment = StringAlignment.Center;
-                    sf.LineAlignment = StringAlignment.Center;
-
-                    using (SolidBrush textBrush = new SolidBrush(btn.ForeColor))
-                    {
-                        e.Graphics.DrawString(btn.Text, btn.Font, textBrush, rect, sf);
-                    }
+                }
+                catch
+                {
+                    lblPingValue.Text = "Başarısız";
                 }
             };
-            btnRename.Click += BtnRename_Click;
-            contentPanel.Controls.Add(btnRename);
+
+            btnScanPorts.Click += async (s, e) =>
+            {
+                btnScanPorts.Enabled = false;
+                if (lblPortsValue != null)
+                    lblPortsValue.Text = "Taranıyor...";
+                try
+                {
+                    var openPorts = await ScanCommonPortsAsync(ip);
+                    if (lblPortsValue != null)
+                    {
+                        if (openPorts.Count == 0)
+                            lblPortsValue.Text = "Açık port bulunamadı.";
+                        else
+                            lblPortsValue.Text = string.Join(", ", openPorts);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (lblPortsValue != null)
+                        lblPortsValue.Text = "Hata: " + ex.Message;
+                }
+                finally
+                {
+                    btnScanPorts.Enabled = true;
+                }
+            };
+        }
+
+        private T? FindControlRecursive<T>(Control parent, string name) where T : Control
+        {
+            foreach (Control ctrl in parent.Controls)
+            {
+                if (ctrl is T t && ctrl.Name == name)
+                    return t;
+                var child = FindControlRecursive<T>(ctrl, name);
+                if (child != null)
+                    return child;
+            }
+            return null;
         }
 
         private void CreateInfoRow(Panel parent, string icon, string label, string value, int yPosition)
@@ -379,14 +549,16 @@ namespace wifi4
 
                 if (!string.IsNullOrWhiteSpace(newName) && newName != currentName)
                 {
-                    customDeviceNames[mac] = newName;
+                    string normMac = mac.Replace(":", "-").ToUpper();
+                    customDeviceNames[normMac] = newName;
                     SaveCustomDeviceNames();
 
                     deviceName = newName;
-                    var lblName = this.Controls.Find("lblName", true).FirstOrDefault() as Label;
+
+                    var lblName = FindControlRecursive<Label>(this, "lblName");
                     if (lblName != null)
                     {
-                        lblName.Text = "Cihaz İsmi: " + newName;
+                        lblName.Text = this.deviceName;  // Başında "Cihaz İsmi:" yok, sadece isim
                     }
 
                     MessageBox.Show("Cihaz adı başarıyla güncellendi!");
@@ -398,10 +570,13 @@ namespace wifi4
         {
             try
             {
-                var lines = customDeviceNames.Select(kvp => $"{kvp.Key}|{kvp.Value}");
+                var lines = customDeviceNames.Select(kvp => $"{kvp.Key.Replace(":", "-").ToUpper()}|{kvp.Value}");
                 File.WriteAllLines(customNamesFilePath, lines);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MessageBox.Show("İsim kaydedilirken hata oluştu: " + ex.Message);
+            }
         }
 
         private void LoadCustomDeviceNames()
@@ -414,11 +589,42 @@ namespace wifi4
                     {
                         var parts = line.Split('|');
                         if (parts.Length == 2)
-                            customDeviceNames[parts[0]] = parts[1];
+                            customDeviceNames[parts[0].Replace(":", "-").ToUpper()] = parts[1];
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                MessageBox.Show("İsim yüklenirken hata oluştu: " + ex.Message);
+            }
+        }
+
+        // Port tarama fonksiyonu
+        private async Task<List<int>> ScanCommonPortsAsync(string ip)
+        {
+            int[] ports = { 20, 21, 22, 23, 25, 53, 80, 110, 139, 143, 443, 445, 3389, 8080 };
+            var openPorts = new List<int>();
+            var tasks = ports.Select(async port =>
+            {
+                try
+                {
+                    using (var client = new System.Net.Sockets.TcpClient())
+                    {
+                        var connectTask = client.ConnectAsync(ip, port);
+                        var timeoutTask = Task.Delay(400);
+                        var completed = await Task.WhenAny(connectTask, timeoutTask);
+                        if (completed == connectTask && client.Connected)
+                        {
+                            lock (openPorts)
+                                openPorts.Add(port);
+                        }
+                    }
+                }
+                catch { }
+            });
+            await Task.WhenAll(tasks);
+            openPorts.Sort();
+            return openPorts;
         }
     }
 }

@@ -12,29 +12,89 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Net.Http;
 using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace wifi4
 {
     public partial class ConnectedDevicesForm : Form
     {
         private Dictionary<string, string> customDeviceNames = new Dictionary<string, string>();
-        private string customNamesFilePath = "custom_device_names.txt";
         private int deviceCount = 0;
+        private CheckBox chkLocalOnly;
+        private List<(string ip, string mac, string hostname, string vendor, string customName, string connectionType, string deviceType)> allDevices = new();
 
         public ConnectedDevicesForm()
         {
             InitializeComponent();
             LoadMacVendorCache();
+            SetHoverBorder(btnScan);
+            SetHoverBorder(btnBack);
             this.BackColor = Color.FromArgb(240, 240, 240);
             this.Size = new Size(355, 618);
             this.StartPosition = FormStartPosition.CenterScreen;
+
+            // Başlık ve sayaç ortalanmış
+            labelCount.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            labelCount.ForeColor = Color.FromArgb(0, 122, 204);
+            labelCount.TextAlign = ContentAlignment.MiddleCenter;
+
+            // Cihaz kartları paneli ortalanmış ve genişliği optimize edilmiş
+            flowDevices.Location = new Point(12, 65);
+            flowDevices.Size = new Size(310, 380);
+            flowDevices.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            flowDevices.AutoScroll = true;
+
+            lblDevicesScan.Location = new Point(15, 470);
+            lblHomePage.Location = new Point(235, 470);
+
+            // Alt kısımda iki büyük buton: Cihazları Tara ve Ana Sayfa
+            btnScan.Size = new Size(80, 60);
+            btnScan.Location = new Point(12, 490);
+            btnScan.Font = new Font("Segoe UI Symbol", 32F, FontStyle.Bold);
+            btnScan.Text = "";
+            btnScan.Image = null;
+            btnScan.ImageAlign = ContentAlignment.MiddleCenter;
+            btnScan.FlatStyle = FlatStyle.Flat;
+            btnScan.FlatAppearance.BorderSize = 0;
+            btnScan.FlatAppearance.BorderColor = this.BackColor;
+            btnScan.TabStop = false;
+            btnScan.UseVisualStyleBackColor = false;
+            btnScan.BackColor = Color.FromArgb(240, 240, 240);
+            btnScan.Cursor = Cursors.Hand;
+
+            btnBack.Size = new Size(80, 60);
+            btnBack.Location = new Point(230, 490);
+            btnBack.Font = new Font("Segoe UI Symbol", 32F, FontStyle.Bold);
+            btnBack.Text = "";
+            btnBack.Image = null;
+            btnBack.ImageAlign = ContentAlignment.MiddleCenter;
+            btnBack.FlatStyle = FlatStyle.Flat;
+            btnBack.FlatAppearance.BorderSize = 0;
+            btnBack.FlatAppearance.BorderColor = this.BackColor;
+            btnBack.TabStop = false;
+            btnBack.UseVisualStyleBackColor = false;
+            btnBack.BackColor = Color.FromArgb(240, 240, 240);
+            btnBack.Cursor = Cursors.Hand;
+
+            chkLocalOnly = new CheckBox();
+            chkLocalOnly.Text = "Sadece Yerel Ağ";
+            chkLocalOnly.Location = new Point(12, 40);
+            chkLocalOnly.AutoSize = true;
+            chkLocalOnly.Font = new Font("Segoe UI", 10);
+            chkLocalOnly.Checked = false;
+            chkLocalOnly.CheckedChanged += (s, e) => ShowFilteredDevices();
+            this.Controls.Add(chkLocalOnly);
+
             try
             {
                 // Loading spinner ayarları
                 loadingSpinner.Image = Image.FromFile(Path.Combine(Application.StartupPath, "Resources", "g2.gif"));
                 loadingSpinner.SizeMode = PictureBoxSizeMode.Zoom;
                 loadingSpinner.Visible = true;
-                
+
                 // Count spinner ayarları
                 countSpinner.Image = Image.FromFile(Path.Combine(Application.StartupPath, "Resources", "g2.gif"));
                 countSpinner.SizeMode = PictureBoxSizeMode.Zoom;
@@ -44,7 +104,7 @@ namespace wifi4
             {
                 MessageBox.Show("Loading gif yüklenirken hata oluştu: " + ex.Message);
             }
-            
+
             // Başlangıçta spinner'ları gizle
             HideLoadingSpinner();
             HideCountSpinner();
@@ -73,6 +133,20 @@ namespace wifi4
         {
             countSpinner.Visible = false;
         }
+        private void SetHoverBorder(Button button)
+        {
+            button.MouseEnter += (s, e) =>
+            {
+                button.FlatAppearance.BorderSize = 2;
+                button.FlatAppearance.BorderColor = Color.SteelBlue; // İstediğin rengi kullanabilirsin
+            };
+
+            button.MouseLeave += (s, e) =>
+            {
+                button.FlatAppearance.BorderSize = 0;
+                button.FlatAppearance.BorderColor = this.BackColor;
+            };
+        }
 
         private async void btnScan_Click(object sender, EventArgs e)
         {
@@ -82,61 +156,110 @@ namespace wifi4
             labelCount.Text = "Toplam Cihaz Sayısı: ";
             deviceCount = 0;
 
-            // Tarama sırasında butonları devre dışı bırak
             btnScan.Enabled = false;
             btnBack.Enabled = false;
+            string customName = !string.IsNullOrEmpty(mac) && customDeviceNames.TryGetValue(mac, out var foundName)
+                ? foundName
+                : "Bilinmeyen";
 
             try
             {
-                string arpOutput = RunCommand("arp", "-a");
-                string[] arpLines = arpOutput.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                
 
+                // 1. Ağ aralığını bul
+                string localIp = GetLocalIPAddress();
+                string baseIp = string.Join(".", localIp.Split('.').Take(3)) + ".";
+                List<string> activeIps = new List<string>();
                 HashSet<string> seenMacs = new HashSet<string>();
 
+                // 2. Tüm IP'lere paralel ping at (daha hızlı ve sınırlı sayıda paralel işlem)
+                var parallelOptions = new ParallelOptions { MaxDegreeOfParallelism = 32 };
+                await Task.Run(() =>
+                {
+                    Parallel.For(1, 255, parallelOptions, (i) =>
+                    {
+                        string ip = baseIp + i;
+                        using (System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping())
+                        {
+                            try
+                            {
+                                var reply = ping.Send(ip, 70); // Daha kısa timeout
+                                if (reply.Status == System.Net.NetworkInformation.IPStatus.Success)
+                                {
+                                    lock (activeIps)
+                                        activeIps.Add(ip);
+                                }
+                            }
+                            catch { }
+                        }
+                    });
+                });
+
+                // 3. ARP tablosunu oku
+                string arpOutput = RunCommand("arp", "-a");
+                string[] arpLines = arpOutput.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                var arpDevices = new List<(string ip, string mac)>();
                 foreach (string line in arpLines)
                 {
-                    Match match = Regex.Match(line, @"(?<ip>\d+\.\d+\.\d+\.\d+)\s+([-\w]+)?\s+(?<mac>([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2})");
-                    labelCount.Text = $"Bulunan cihaz sayısı: {deviceCount}";
+                    var match = System.Text.RegularExpressions.Regex.Match(line, @"(?<ip>\d+\.\d+\.\d+\.\d+)\s+([\-\w]+)?\s+(?<mac>([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2})");
                     if (match.Success)
                     {
                         string ip = match.Groups["ip"].Value;
-                        string mac = match.Groups["mac"].Value.ToUpper();
-
-                        if (seenMacs.Contains(mac))
-                            continue;
-                        seenMacs.Add(mac);
-
-                        string hostname = "Çözümlenemedi";
-                        try
-                        {
-                            var hostEntry = await Dns.GetHostEntryAsync(ip);
-                            hostname = hostEntry.HostName;
-                        }
-                        catch { }
-
-                        string vendor = await GetVendorFromMacAsync(mac);
-                        string customName = customDeviceNames.ContainsKey(mac) ? customDeviceNames[mac] : "Bilinmeyen";
-                        string connectionType = GetConnectionType(ip);
-                        string deviceType = GetDeviceType(vendor);
-
-                        AddDeviceCard(ip, mac, hostname, vendor, customName, connectionType, deviceType);
-                        deviceCount++;
-
-                        // İlk cihaz bulunduğunda ana spinner'ı gizle
-                        if (deviceCount == 1)
-                        {
-                            HideLoadingSpinner();
-                        }
-
-                        
-
-                        // Count spinner'ın pozisyonunu güncelle
-                        countSpinner.Location = new Point(labelCount.Right + 10, labelCount.Top + 2);
-
-                        // UI'yi güncelle
-                        Application.DoEvents();
+                        string mac = match.Groups["mac"].Value.ToUpper().Replace(":", "-");
+                        arpDevices.Add((ip, mac));
                     }
                 }
+
+                // 4. Ping ve ARP sonuçlarını birleştir
+                var allIps = activeIps.Union(arpDevices.Select(d => d.ip)).Distinct().ToList();
+
+                allDevices.Clear();
+                foreach (string ip in allIps)
+                {
+                    string mac = arpDevices.FirstOrDefault(d => d.ip == ip).mac ?? "";
+                    mac = mac.Replace(":", "-").ToUpper();
+                    if (string.IsNullOrWhiteSpace(mac) || seenMacs.Contains(mac))
+                        continue;
+                    seenMacs.Add(mac);
+
+                
+                    string hostname = "Çözümlenemedi";
+
+
+                    string vendor = "Bilinmeyen Üretici";
+                    if (!macVendorCache.ContainsKey(mac))
+                    {
+                        try
+                        {
+                            vendor = await GetVendorFromMacAsync(mac);
+                        }
+                        catch { }
+                    }
+                    else
+                    {
+                        vendor = macVendorCache[mac];
+                    }
+
+                    string connectionType = GetConnectionType(ip);
+                    string deviceType = GetDeviceType(vendor);
+
+                    var deviceTuple = (ip, mac, hostname, vendor, customName, connectionType, deviceType);
+                    allDevices.Add(deviceTuple);
+
+                    if (!chkLocalOnly.Checked || (connectionType != null && connectionType.Trim().ToLower() == "yerel ağ"))
+                    {
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            AddDeviceCard(ip, mac, hostname, vendor, customName, connectionType, deviceType);
+                            deviceCount++;
+                            if (deviceCount == 1)
+                                HideLoadingSpinner();
+                            countSpinner.Location = new Point(labelCount.Right + 10, labelCount.Top + 2);
+                            labelCount.Text = $"Toplam cihaz sayısı: {deviceCount}";
+                        });
+                    }
+                }
+                labelCount.Text = $"Toplam cihaz sayısı: {deviceCount}";
             }
             catch (Exception ex)
             {
@@ -144,20 +267,25 @@ namespace wifi4
             }
             finally
             {
-                // Eğer hiç cihaz bulunamadıysa ana spinner'ı gizle
                 if (deviceCount == 0)
-                {
                     HideLoadingSpinner();
-                }
-
-                // Count spinner'ı gizle ve son sayıyı göster
                 HideCountSpinner();
-                labelCount.Text = $"Toplam cihaz sayısı: {deviceCount}";
-
-                // Butonları tekrar etkinleştir
                 btnScan.Enabled = true;
                 btnBack.Enabled = true;
             }
+        }
+
+        private string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            return "192.168.1.1";
         }
 
         private string GetConnectionType(string ip)
@@ -216,6 +344,7 @@ namespace wifi4
 
         private Dictionary<string, string> macVendorCache = new Dictionary<string, string>();
         private string macVendorCacheFile = "mac_vendors.txt";
+        private string mac;
 
         private async Task<string> GetVendorFromMacAsync(string mac)
         {
@@ -231,7 +360,7 @@ namespace wifi4
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", "CSharpApp");
-                    string url = $"https://api.macvendors.com/{mac}";
+                    string url = $"https://macvendors.co/api/{mac}/json";
                     var response = await client.GetStringAsync(url);
 
                     if (!string.IsNullOrWhiteSpace(response))
@@ -270,7 +399,7 @@ namespace wifi4
             {
                 string output = RunCommand("netsh", "wlan show interfaces");
                 string[] lines = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                
+
                 foreach (string line in lines)
                 {
                     if (line.Contains("Name") && !line.Contains("Description"))
@@ -287,14 +416,18 @@ namespace wifi4
         {
             var panel = new Panel
             {
-                Width = 240,
-                Height = 200,
+                Width = 250,
+                Height = 180,
                 Margin = new Padding(10),
-                Padding = new Padding(15)
+                Padding = new Padding(15),
+                BackColor = Color.White,
+                Tag = false // hover değilken false
             };
 
             panel.Paint += (s, e) =>
             {
+                bool isHovered = (bool)panel.Tag;
+
                 using (LinearGradientBrush brush = new LinearGradientBrush(
                     panel.ClientRectangle,
                     Color.FromArgb(255, 255, 255),
@@ -304,10 +437,22 @@ namespace wifi4
                     e.Graphics.FillRectangle(brush, panel.ClientRectangle);
                 }
 
-                using (Pen pen = new Pen(Color.FromArgb(200, 200, 200), 1))
+                using (Pen pen = new Pen(isHovered ? Color.FromArgb(0, 122, 204) : Color.FromArgb(200, 200, 200), 2))
                 {
                     e.Graphics.DrawRectangle(pen, 0, 0, panel.Width - 1, panel.Height - 1);
                 }
+            };
+
+            panel.MouseEnter += (s, e) =>
+            {
+                panel.Tag = true;
+                panel.Invalidate(); // yeniden çiz
+            };
+
+            panel.MouseLeave += (s, e) =>
+            {
+                panel.Tag = false;
+                panel.Invalidate(); // yeniden çiz
             };
 
             var iconLabel = new Label
@@ -319,12 +464,16 @@ namespace wifi4
                 BackColor = Color.Transparent
             };
 
+            string displayName = string.IsNullOrEmpty(name) || name == "Bilinmeyen" ? "Bilinmeyen Cihaz" : name;
+
             var nameLabel = new Label
             {
-                Text = name,
+                Text = displayName,
                 Font = new Font("Segoe UI", 12, FontStyle.Bold),
                 Location = new Point(iconLabel.Right + 5, 15),
-                AutoSize = true
+                AutoSize = true,
+                BackColor = Color.Transparent
+
             };
 
             var typeLabel = new Label
@@ -334,7 +483,9 @@ namespace wifi4
                 ForeColor = Color.Gray,
                 Location = new Point(iconLabel.Right + 5, 40),
                 Size = new Size(panel.Width - (iconLabel.Right + 10), 30),
-                AutoSize = false
+                AutoSize = false,
+                BackColor = Color.Transparent
+
             };
 
             var connectionLabel = new Label
@@ -342,7 +493,9 @@ namespace wifi4
                 Text = $"🌐 {connectionType}",
                 Font = new Font("Segoe UI", 9),
                 Location = new Point(15, 80),
-                AutoSize = true
+                AutoSize = true,
+                BackColor = Color.Transparent
+
             };
 
             var ipLabel = new Label
@@ -350,7 +503,9 @@ namespace wifi4
                 Text = $"📡 IP: {ip}",
                 Font = new Font("Segoe UI", 9),
                 Location = new Point(15, 105),
-                AutoSize = true
+                AutoSize = true,
+                BackColor = Color.Transparent
+
             };
 
             var macLabel = new Label
@@ -358,7 +513,9 @@ namespace wifi4
                 Text = $"🔑 MAC: {mac}",
                 Font = new Font("Segoe UI", 9),
                 Location = new Point(15, 130),
-                AutoSize = true
+                AutoSize = true,
+                BackColor = Color.Transparent
+
             };
 
             var vendorLabel = new Label
@@ -366,16 +523,15 @@ namespace wifi4
                 Text = $"🏭 Üretici: {vendor}",
                 Font = new Font("Segoe UI", 9),
                 Location = new Point(15, 155),
-                AutoSize = true
+                AutoSize = true,
+                BackColor = Color.Transparent
+
             };
 
-            panel.MouseEnter += (s, e) => panel.BackColor = Color.FromArgb(245, 245, 245);
-            panel.MouseLeave += (s, e) => panel.BackColor = Color.White;
-
-            panel.Controls.AddRange(new Control[] { 
-                iconLabel, nameLabel, typeLabel, connectionLabel, 
-                ipLabel, macLabel, vendorLabel
-            });
+            panel.Controls.AddRange(new Control[] {
+        iconLabel, nameLabel, typeLabel, connectionLabel,
+        ipLabel, macLabel, vendorLabel
+    });
 
             panel.DoubleClick += (sender, e) =>
             {
@@ -387,6 +543,7 @@ namespace wifi4
 
             flowDevices.Controls.Add(panel);
         }
+
 
         private string GetDeviceIcon(string deviceType)
         {
@@ -435,5 +592,23 @@ namespace wifi4
                 countSpinner.Location = new Point(labelCount.Right + 8);
             }
         }
+
+        private void ShowFilteredDevices()
+        {
+            flowDevices.Controls.Clear();
+            deviceCount = 0;
+            var filteredDevices = chkLocalOnly.Checked
+                ? allDevices.Where(d => d.connectionType != null && d.connectionType.Trim().ToLower() == "yerel ağ").ToList()
+                : allDevices;
+            foreach (var device in filteredDevices)
+            {
+                AddDeviceCard(device.ip, device.mac, device.hostname, device.vendor, device.customName, device.connectionType, device.deviceType);
+                deviceCount++;
+            }
+            labelCount.Text = $"Toplam cihaz sayısı: {deviceCount}";
+        }
+
+
+
     }
 }
