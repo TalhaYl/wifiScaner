@@ -16,3 +16,6 @@ DC2C6E2670E8|Routerboard.com
 005056FED1A3|VMware, Inc.
 005056F917A1|VMware, Inc.
 005056F616AF|VMware, Inc.
+28AD18E6600D|Hui Zhou Gaoshengda Technology Co.,LTD
+005056F95D5E|VMware, Inc.
+005056F15A14|VMware, Inc.

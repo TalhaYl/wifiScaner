@@ -26,9 +26,28 @@ namespace wifi4
             InitializeComponent();
             LoadMacVendorCache();
             this.BackColor = Color.FromArgb(240, 240, 240);
-            // Spinner GIF resource atama
-            loadingSpinner.Image = Properties.Resources.loading;
-            countSpinner.Image = Properties.Resources.loading;
+            this.Size = new Size(355, 618);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            try
+            {
+                // Loading spinner ayarları
+                loadingSpinner.Image = Image.FromFile(Path.Combine(Application.StartupPath, "Resources", "g2.gif"));
+                loadingSpinner.SizeMode = PictureBoxSizeMode.Zoom;
+                loadingSpinner.Visible = true;
+                
+                // Count spinner ayarları
+                countSpinner.Image = Image.FromFile(Path.Combine(Application.StartupPath, "Resources", "g2.gif"));
+                countSpinner.SizeMode = PictureBoxSizeMode.Zoom;
+                countSpinner.Visible = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Loading gif yüklenirken hata oluştu: " + ex.Message);
+            }
+            
+            // Başlangıçta spinner'ları gizle
+            HideLoadingSpinner();
+            HideCountSpinner();
         }
 
         private void ShowLoadingSpinner()
@@ -60,7 +79,7 @@ namespace wifi4
             flowDevices.Controls.Clear();
             ShowLoadingSpinner();
             ShowCountSpinner();
-            labelCount.Text = "Tarama yapılıyor...";
+            labelCount.Text = "Toplam Cihaz Sayısı: ";
             deviceCount = 0;
 
             // Tarama sırasında butonları devre dışı bırak
@@ -77,7 +96,7 @@ namespace wifi4
                 foreach (string line in arpLines)
                 {
                     Match match = Regex.Match(line, @"(?<ip>\d+\.\d+\.\d+\.\d+)\s+([-\w]+)?\s+(?<mac>([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2})");
-
+                    labelCount.Text = $"Bulunan cihaz sayısı: {deviceCount}";
                     if (match.Success)
                     {
                         string ip = match.Groups["ip"].Value;
@@ -109,7 +128,7 @@ namespace wifi4
                             HideLoadingSpinner();
                         }
 
-                        labelCount.Text = $"Toplam cihaz sayısı: {deviceCount}";
+                        
 
                         // Count spinner'ın pozisyonunu güncelle
                         countSpinner.Location = new Point(labelCount.Right + 10, labelCount.Top + 2);
@@ -245,50 +264,6 @@ namespace wifi4
             }
         }
 
-        private async Task<List<int>> ScanOpenPortsAsync(string ip)
-        {
-            List<int> openPorts = new List<int>();
-            int[] commonPorts = { 21, 22, 23, 25, 53, 80, 110, 143, 443, 445, 3306, 3389, 8080 };
-
-            foreach (int port in commonPorts)
-            {
-                try
-                {
-                    using (TcpClient client = new TcpClient())
-                    {
-                        var connectTask = client.ConnectAsync(ip, port);
-                        if (await Task.WhenAny(connectTask, Task.Delay(100)) == connectTask)
-                        {
-                            openPorts.Add(port);
-                        }
-                    }
-                }
-                catch { }
-            }
-            return openPorts;
-        }
-
-        private string GetPortService(int port)
-        {
-            switch (port)
-            {
-                case 21: return "FTP";
-                case 22: return "SSH";
-                case 23: return "Telnet";
-                case 25: return "SMTP";
-                case 53: return "DNS";
-                case 80: return "HTTP";
-                case 110: return "POP3";
-                case 143: return "IMAP";
-                case 443: return "HTTPS";
-                case 445: return "SMB";
-                case 3306: return "MySQL";
-                case 3389: return "RDP";
-                case 8080: return "HTTP-Alt";
-                default: return "Unknown";
-            }
-        }
-
         private string GetWiFiInterface(string ip)
         {
             try
@@ -313,7 +288,7 @@ namespace wifi4
             var panel = new Panel
             {
                 Width = 240,
-                Height = 240,
+                Height = 200,
                 Margin = new Padding(10),
                 Padding = new Padding(15)
             };
@@ -394,28 +369,12 @@ namespace wifi4
                 AutoSize = true
             };
 
-            // Port taraması yap
-            var openPorts = await ScanOpenPortsAsync(ip);
-            var portsText = openPorts.Count > 0 
-                ? string.Join(", ", openPorts.Select(p => $"{p} ({GetPortService(p)})"))
-                : "Açık port bulunamadı";
-
-            var wifiInterface = GetWiFiInterface(ip);
-            var portsLabel = new Label
-            {
-                Text = $"📶 WiFi: {wifiInterface}",
-                Font = new Font("Segoe UI", 9),
-                Location = new Point(15, 180),
-                Size = new Size(210, 40),
-                AutoSize = false
-            };
-
             panel.MouseEnter += (s, e) => panel.BackColor = Color.FromArgb(245, 245, 245);
             panel.MouseLeave += (s, e) => panel.BackColor = Color.White;
 
             panel.Controls.AddRange(new Control[] { 
                 iconLabel, nameLabel, typeLabel, connectionLabel, 
-                ipLabel, macLabel, vendorLabel, portsLabel 
+                ipLabel, macLabel, vendorLabel
             });
 
             panel.DoubleClick += (sender, e) =>
@@ -473,7 +432,7 @@ namespace wifi4
             }
             if (countSpinner != null && countSpinner.Visible)
             {
-                countSpinner.Location = new Point(labelCount.Right + 10, labelCount.Top + 2);
+                countSpinner.Location = new Point(labelCount.Right + 8);
             }
         }
     }

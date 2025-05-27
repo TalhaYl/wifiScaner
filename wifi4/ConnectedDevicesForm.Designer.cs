@@ -35,8 +35,10 @@
             btnBack = new Button();
             lblDevicesScan = new Label();
             lblHomePage = new Label();
-            this.loadingSpinner = new System.Windows.Forms.PictureBox();
-            this.countSpinner = new System.Windows.Forms.PictureBox();
+            loadingSpinner = new PictureBox();
+            countSpinner = new PictureBox();
+            ((System.ComponentModel.ISupportInitialize)loadingSpinner).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)countSpinner).BeginInit();
             SuspendLayout();
             // 
             // btnScan
@@ -68,9 +70,9 @@
             labelCount.Font = new Font("Segoe UI", 12F);
             labelCount.Location = new Point(12, 18);
             labelCount.Name = "labelCount";
-            labelCount.Size = new Size(148, 28);
+            labelCount.Size = new Size(207, 28);
             labelCount.TabIndex = 2;
-            labelCount.Text = "Toplam Cihaz: 0";
+            labelCount.Text = "Toplam Cihaz Sayısı : 0";
             // 
             // btnBack
             // 
@@ -107,19 +109,23 @@
             // 
             // loadingSpinner
             // 
-            this.loadingSpinner.Location = new System.Drawing.Point(20, 380);
-            this.loadingSpinner.Name = "loadingSpinner";
-            this.loadingSpinner.Size = new System.Drawing.Size(40, 40);
-            this.loadingSpinner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.loadingSpinner.Visible = false;
+            loadingSpinner.BackColor = Color.Transparent;
+            loadingSpinner.Location = new Point(20, 380);
+            loadingSpinner.Name = "loadingSpinner";
+            loadingSpinner.Size = new Size(40, 40);
+            loadingSpinner.SizeMode = PictureBoxSizeMode.Zoom;
+            loadingSpinner.TabIndex = 6;
+            loadingSpinner.TabStop = false;
             // 
             // countSpinner
             // 
-            this.countSpinner.Location = new System.Drawing.Point(200, 20);
-            this.countSpinner.Name = "countSpinner";
-            this.countSpinner.Size = new System.Drawing.Size(30, 30);
-            this.countSpinner.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.countSpinner.Visible = false;
+            countSpinner.BackColor = Color.Transparent;
+            countSpinner.Location = new Point(224, -7);
+            countSpinner.Name = "countSpinner";
+            countSpinner.Size = new Size(74, 59);
+            countSpinner.SizeMode = PictureBoxSizeMode.Zoom;
+            countSpinner.TabIndex = 7;
+            countSpinner.TabStop = false;
             // 
             // ConnectedDevicesForm
             // 
@@ -133,13 +139,15 @@
             Controls.Add(labelCount);
             Controls.Add(btnBack);
             Controls.Add(flowDevices);
-            Controls.Add(this.loadingSpinner);
-            Controls.Add(this.countSpinner);
+            Controls.Add(loadingSpinner);
+            Controls.Add(countSpinner);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "ConnectedDevicesForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Bağlı Cihazlar";
+            ((System.ComponentModel.ISupportInitialize)loadingSpinner).EndInit();
+            ((System.ComponentModel.ISupportInitialize)countSpinner).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }

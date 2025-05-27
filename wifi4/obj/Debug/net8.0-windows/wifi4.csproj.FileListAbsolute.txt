@@ -23,3 +23,4 @@ C:\Users\TALHA\source\repos\wifi4\wifi4\bin\Debug\net8.0-windows\PacketDotNet.dl
 C:\Users\TALHA\source\repos\wifi4\wifi4\bin\Debug\net8.0-windows\SharpPcap.dll
 C:\Users\TALHA\source\repos\wifi4\wifi4\obj\Debug\net8.0-windows\wifi4.csproj.AssemblyReference.cache
 C:\Users\TALHA\source\repos\wifi4\wifi4\obj\Debug\net8.0-windows\wifi4.csproj.Up2Date
+C:\Users\TALHA\source\repos\wifi4\wifi4\bin\Debug\net8.0-windows\Resources\g2.gif

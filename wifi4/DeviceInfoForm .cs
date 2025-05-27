@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
-using System.Net.Sockets;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
+using System.Linq;
+
+#nullable enable
 
 namespace wifi4
 {
@@ -16,12 +14,10 @@ namespace wifi4
     {
         private Dictionary<string, string> customDeviceNames = new Dictionary<string, string>();
         private string customNamesFilePath = "custom_device_names.txt";
-
         private string deviceMac;
         private string deviceName;
         private string deviceIp;
-        private Panel cardPanel;
-        private PictureBox loadingSpinner;
+        private Panel? cardPanel;
 
         public DeviceInfoForm(string deviceName, string ip, string mac, string vendor, string hostname, string connectionType, string deviceType)
         {
@@ -38,77 +34,10 @@ namespace wifi4
             this.StartPosition = FormStartPosition.CenterParent;
             this.ClientSize = new Size(400, 450);
 
-            InitializeLoadingSpinner();
-            InitializeAsync(deviceName, ip, mac, vendor, hostname, connectionType, deviceType);
+            CreateVCardPanel(deviceName, ip, mac, vendor, hostname, connectionType, deviceType);
         }
 
-        private async void InitializeAsync(string deviceName, string ip, string mac, string vendor, string hostname, string connectionType, string deviceType)
-        {
-            await CreateVCardPanel(deviceName, ip, mac, vendor, hostname, connectionType, deviceType);
-        }
-
-        private void InitializeLoadingSpinner()
-        {
-            loadingSpinner = new PictureBox
-            {
-                Size = new Size(40, 40),
-                Location = new Point(20, 380),
-                Visible = false,
-                SizeMode = PictureBoxSizeMode.Zoom,
-                Image = Image.FromFile("Resources/loading.gif")
-            };
-            this.Controls.Add(loadingSpinner);
-        }
-
-        private async Task<List<int>> ScanOpenPortsAsync(string ip)
-        {
-            List<int> openPorts = new List<int>();
-            
-            try
-            {
-                // Nmap komutunu oluştur
-                string nmapCommand = $"-sS -sV -p- --min-rate=1000 -T4 {ip}";
-                
-                // Nmap'i çalıştır
-                using (Process process = new Process())
-                {
-                    process.StartInfo.FileName = "nmap";
-                    process.StartInfo.Arguments = nmapCommand;
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.StartInfo.CreateNoWindow = true;
-
-                    process.Start();
-                    string output = await process.StandardOutput.ReadToEndAsync();
-                    await process.WaitForExitAsync();
-
-                    // Nmap çıktısını işle
-                    var portMatches = Regex.Matches(output, @"(\d+)/tcp\s+open\s+(\w+)");
-                    foreach (Match match in portMatches)
-                    {
-                        if (int.TryParse(match.Groups[1].Value, out int port))
-                        {
-                            openPorts.Add(port);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Port tarama hatası: {ex.Message}\n\nNmap'in yüklü olduğundan emin olun.", 
-                    "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-            return openPorts;
-        }
-
-        private string GetPortService(int port)
-        {
-            // Nmap'in tespit ettiği servis bilgisini kullan
-            return "Taranıyor...";
-        }
-
-        private async Task CreateVCardPanel(string deviceName, string ip, string mac, string vendor, string hostname, string connectionType, string deviceType)
+        private void CreateVCardPanel(string deviceName, string ip, string mac, string vendor, string hostname, string connectionType, string deviceType)
         {
             cardPanel = new Panel
             {
@@ -129,18 +58,18 @@ namespace wifi4
                     {
                         using (Pen shadowPen = new Pen(Color.FromArgb(20, 0, 0, 0), 1))
                         {
-                            e.Graphics.DrawPath(shadowPen, CreateRoundedRectangle(new Rectangle(i, i, rect.Width - i * 2, rect.Height - i * 2), 10));
+                            e.Graphics.DrawPath(shadowPen, path);
                         }
                     }
 
-                    using (SolidBrush cardBrush = new SolidBrush(Color.White))
+                    using (SolidBrush brush = new SolidBrush(Color.White))
                     {
-                        e.Graphics.FillPath(cardBrush, path);
+                        e.Graphics.FillPath(brush, path);
                     }
 
-                    using (Pen borderPen = new Pen(Color.FromArgb(230, 230, 230), 1))
+                    using (Pen pen = new Pen(Color.FromArgb(200, 200, 200), 1))
                     {
-                        e.Graphics.DrawPath(borderPen, path);
+                        e.Graphics.DrawPath(pen, path);
                     }
                 }
             };
@@ -170,56 +99,55 @@ namespace wifi4
             };
             cardPanel.Controls.Add(headerPanel);
 
-            // Avatar Panel (Rounded White Background)
+            // Avatar Panel
             Panel avatarPanel = new Panel
             {
                 Size = new Size(70, 70),
                 Location = new Point(15, 15),
-                BackColor = Color.Transparent // Will be drawn in Paint event
+                BackColor = Color.Transparent
             };
-             avatarPanel.Paint += (sender, e) =>
+            avatarPanel.Paint += (sender, e) =>
             {
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 Rectangle rect = new Rectangle(0, 0, avatarPanel.Width, avatarPanel.Height);
                 using (GraphicsPath path = CreateRoundedRectangle(rect, 8))
                 {
-                     e.Graphics.FillPath(Brushes.White, path);
-                     // Draw icon on top of the rounded background
-                      using (Font iconFont = new Font("Segoe UI Symbol", 30)) // Increased font size
-                        {
-                            string iconChar = "📱";
-                            if (deviceType.Contains("Router") || deviceType.Contains("Modem"))
-                                iconChar = "📶";
-                            else if (deviceType.Contains("PC") || deviceType.Contains("Bilgisayar"))
-                                iconChar = "💻";
-                            else if (deviceType.Contains("TV") || deviceType.Contains("Television"))
-                                iconChar = "📺";
-                            else if (deviceType.Contains("Printer") || deviceType.Contains("Yazıcı"))
-                                iconChar = "🖨️";
+                    e.Graphics.FillPath(Brushes.White, path);
+                    using (Font iconFont = new Font("Segoe UI Symbol", 30))
+                    {
+                        string iconChar = "📱";
+                        if (deviceType.Contains("Router") || deviceType.Contains("Modem"))
+                            iconChar = "📶";
+                        else if (deviceType.Contains("PC") || deviceType.Contains("Bilgisayar"))
+                            iconChar = "💻";
+                        else if (deviceType.Contains("TV") || deviceType.Contains("Television"))
+                            iconChar = "📺";
+                        else if (deviceType.Contains("Printer") || deviceType.Contains("Yazıcı"))
+                            iconChar = "🖨️";
 
-                            SizeF size = e.Graphics.MeasureString(iconChar, iconFont);
-                            e.Graphics.DrawString(iconChar, iconFont, Brushes.DodgerBlue,
-                                (avatarPanel.Width - size.Width) / 2,
-                                (avatarPanel.Height - size.Height) / 2);
-                        }
+                        SizeF size = e.Graphics.MeasureString(iconChar, iconFont);
+                        e.Graphics.DrawString(iconChar, iconFont, Brushes.DodgerBlue,
+                            (avatarPanel.Width - size.Width) / 2,
+                            (avatarPanel.Height - size.Height) / 2);
+                    }
                 }
             };
             headerPanel.Controls.Add(avatarPanel);
 
-            // Device Name Panel (Rounded White Background)
+            // Device Name Panel
             Panel deviceNamePanel = new Panel
             {
-                 Size = new Size(180, 30),
-                 Location = new Point(95, 20),
-                 BackColor = Color.Transparent // Will be drawn in Paint event
+                Size = new Size(180, 30),
+                Location = new Point(95, 20),
+                BackColor = Color.Transparent
             };
             deviceNamePanel.Paint += (sender, e) =>
             {
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 Rectangle rect = new Rectangle(0, 0, deviceNamePanel.Width, deviceNamePanel.Height);
-                 using (GraphicsPath path = CreateRoundedRectangle(rect, 5))
+                using (GraphicsPath path = CreateRoundedRectangle(rect, 5))
                 {
-                     e.Graphics.FillPath(Brushes.White, path);
+                    e.Graphics.FillPath(Brushes.White, path);
                 }
             };
             headerPanel.Controls.Add(deviceNamePanel);
@@ -227,46 +155,46 @@ namespace wifi4
             Label lblDeviceName = new Label
             {
                 Text = deviceName,
-                Font = new Font("Segoe UI", 12, FontStyle.Bold), // Adjusted font size
-                AutoSize = false, // Set AutoSize to false
-                Size = deviceNamePanel.Size, // Match parent panel size
-                Location = new Point(0, 0), // Position at top-left of parent panel
-                TextAlign = ContentAlignment.MiddleCenter, // Center text
+                Font = new Font("Segoe UI", 12, FontStyle.Bold),
+                AutoSize = false,
+                Size = deviceNamePanel.Size,
+                Location = new Point(0, 0),
+                TextAlign = ContentAlignment.MiddleCenter,
                 BackColor = Color.Transparent,
                 Name = "lblName"
             };
-            deviceNamePanel.Controls.Add(lblDeviceName); // Add to the new panel
+            deviceNamePanel.Controls.Add(lblDeviceName);
 
-            // MAC Address Panel (Already has rounded corners, adjusting size and location)
+            // MAC Address Panel
             Panel macPanel = new Panel
             {
-                Size = new Size(180, 25), // Adjusted size
-                Location = new Point(95, 55), // Adjusted location
-                BackColor = Color.Transparent // Will be drawn in Paint event
+                Size = new Size(180, 25),
+                Location = new Point(95, 55),
+                BackColor = Color.Transparent
             };
-            macPanel.Paint += (sender, e) => // Retained Paint event for rounded corners
+            macPanel.Paint += (sender, e) =>
             {
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 Rectangle rect = new Rectangle(0, 0, macPanel.Width, macPanel.Height);
-                using (GraphicsPath path = CreateRoundedRectangle(rect, 5)) // Reduced radius slightly
+                using (GraphicsPath path = CreateRoundedRectangle(rect, 5))
                 {
                     e.Graphics.FillPath(Brushes.White, path);
                 }
             };
-            headerPanel.Controls.Add(macPanel); // Ensure it's added to the header panel
+            headerPanel.Controls.Add(macPanel);
 
             Label lblMacSubtitle = new Label
             {
                 Text = mac,
                 ForeColor = Color.FromArgb(80, 80, 80),
                 Font = new Font("Segoe UI", 9),
-                AutoSize = false, // Set AutoSize to false
-                Size = macPanel.Size, // Match parent panel size
-                Location = new Point(0, 0), // Position at top-left of parent panel
-                 TextAlign = ContentAlignment.MiddleCenter, // Center text
+                AutoSize = false,
+                Size = macPanel.Size,
+                Location = new Point(0, 0),
+                TextAlign = ContentAlignment.MiddleCenter,
                 BackColor = Color.Transparent
             };
-            macPanel.Controls.Add(lblMacSubtitle); // Add to macPanel
+            macPanel.Controls.Add(lblMacSubtitle);
 
             Panel contentPanel = new Panel
             {
@@ -282,17 +210,6 @@ namespace wifi4
             CreateInfoRow(contentPanel, "🌐", "Bağlantı", connectionType, 125);
             CreateInfoRow(contentPanel, "📱", "Cihaz Türü", deviceType, 160);
 
-            // Port taraması başlat
-            loadingSpinner.Visible = true;
-            var openPorts = await ScanOpenPortsAsync(ip);
-            loadingSpinner.Visible = false;
-
-            var portsText = openPorts.Count > 0
-                ? string.Join(", ", openPorts.Select(p => $"{p} ({GetPortService(p)})"))
-                : "Açık port bulunamadı";
-
-            CreateInfoRow(contentPanel, "🔌", "Açık Portlar", portsText, 195);
-
             Button btnRename = new Button
             {
                 Text = "İsim Değiştir",
@@ -307,25 +224,27 @@ namespace wifi4
             btnRename.FlatAppearance.BorderSize = 0;
             btnRename.Paint += (sender, e) =>
             {
-                Button btn = (Button)sender;
-                Rectangle rect = new Rectangle(0, 0, btn.Width, btn.Height);
-
-                using (GraphicsPath path = CreateRoundedRectangle(rect, 20))
+                if (sender is Button btn)
                 {
-                    e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                    using (SolidBrush brush = new SolidBrush(btn.BackColor))
+                    Rectangle rect = new Rectangle(0, 0, btn.Width, btn.Height);
+
+                    using (GraphicsPath path = CreateRoundedRectangle(rect, 20))
                     {
-                        e.Graphics.FillPath(brush, path);
+                        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                        using (SolidBrush brush = new SolidBrush(btn.BackColor))
+                        {
+                            e.Graphics.FillPath(brush, path);
+                        }
                     }
-                }
 
-                StringFormat sf = new StringFormat();
-                sf.Alignment = StringAlignment.Center;
-                sf.LineAlignment = StringAlignment.Center;
+                    StringFormat sf = new StringFormat();
+                    sf.Alignment = StringAlignment.Center;
+                    sf.LineAlignment = StringAlignment.Center;
 
-                using (SolidBrush textBrush = new SolidBrush(btn.ForeColor))
-                {
-                    e.Graphics.DrawString(btn.Text, btn.Font, textBrush, rect, sf);
+                    using (SolidBrush textBrush = new SolidBrush(btn.ForeColor))
+                    {
+                        e.Graphics.DrawString(btn.Text, btn.Font, textBrush, rect, sf);
+                    }
                 }
             };
             btnRename.Click += BtnRename_Click;
@@ -372,55 +291,50 @@ namespace wifi4
 
         private GraphicsPath CreateRoundedRectanglePath(Rectangle rect, int radius, bool topLeft, bool topRight, bool bottomRight, bool bottomLeft)
         {
-            int diameter = radius * 2;
-            Size size = new Size(diameter, diameter);
-            Rectangle arc = new Rectangle(rect.Location, size);
             GraphicsPath path = new GraphicsPath();
+            int diameter = radius * 2;
 
             if (topLeft)
             {
-                path.AddArc(arc, 180, 90);
+                path.AddArc(rect.X, rect.Y, diameter, diameter, 180, 90);
             }
             else
             {
-                path.AddLine(arc.X, arc.Y, arc.X, arc.Y);
+                path.AddLine(rect.X, rect.Y, rect.X, rect.Y);
             }
 
-            arc.X = rect.Right - diameter;
             if (topRight)
             {
-                path.AddArc(arc, 270, 90);
+                path.AddArc(rect.Right - diameter, rect.Y, diameter, diameter, 270, 90);
             }
             else
             {
-                path.AddLine(arc.Right, arc.Y, arc.Right, arc.Y);
+                path.AddLine(rect.Right, rect.Y, rect.Right, rect.Y);
             }
 
-            arc.Y = rect.Bottom - diameter;
             if (bottomRight)
             {
-                path.AddArc(arc, 0, 90);
+                path.AddArc(rect.Right - diameter, rect.Bottom - diameter, diameter, diameter, 0, 90);
             }
             else
             {
-                path.AddLine(arc.Right, arc.Bottom, arc.Right, arc.Bottom);
+                path.AddLine(rect.Right, rect.Bottom, rect.Right, rect.Bottom);
             }
 
-            arc.X = rect.Left;
             if (bottomLeft)
             {
-                path.AddArc(arc, 90, 90);
+                path.AddArc(rect.X, rect.Bottom - diameter, diameter, diameter, 90, 90);
             }
             else
             {
-                path.AddLine(arc.X, arc.Bottom, arc.X, arc.Bottom);
+                path.AddLine(rect.X, rect.Bottom, rect.X, rect.Bottom);
             }
 
             path.CloseFigure();
             return path;
         }
 
-        private void BtnRename_Click(object sender, EventArgs e)
+        private void BtnRename_Click(object? sender, EventArgs e)
         {
             RenameDevice(deviceMac, deviceName);
         }
@@ -482,19 +396,29 @@ namespace wifi4
 
         private void SaveCustomDeviceNames()
         {
-            File.WriteAllLines(customNamesFilePath, customDeviceNames.Select(kvp => $"{kvp.Key}|{kvp.Value}"));
+            try
+            {
+                var lines = customDeviceNames.Select(kvp => $"{kvp.Key}|{kvp.Value}");
+                File.WriteAllLines(customNamesFilePath, lines);
+            }
+            catch { }
         }
 
         private void LoadCustomDeviceNames()
         {
-            if (!File.Exists(customNamesFilePath)) return;
-
-            foreach (var line in File.ReadAllLines(customNamesFilePath))
+            try
             {
-                var parts = line.Split('|');
-                if (parts.Length == 2)
-                    customDeviceNames[parts[0]] = parts[1];
+                if (File.Exists(customNamesFilePath))
+                {
+                    foreach (var line in File.ReadAllLines(customNamesFilePath))
+                    {
+                        var parts = line.Split('|');
+                        if (parts.Length == 2)
+                            customDeviceNames[parts[0]] = parts[1];
+                    }
+                }
             }
+            catch { }
         }
     }
 }

@@ -180,16 +180,12 @@ namespace wifi4
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-           
-            if (this is MainMenuForm)
+            if (e.CloseReason == CloseReason.UserClosing)
             {
-                Application.Exit();
+                MainMenuForm mainMenu = new MainMenuForm();
+                mainMenu.Show();
             }
-            else
-            {
-                base.OnFormClosing(e);
-            }
+            base.OnFormClosing(e);
         }
-
     }
 }

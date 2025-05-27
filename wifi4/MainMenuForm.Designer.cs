@@ -38,13 +38,11 @@
             // btnWifiScan
             // 
             btnWifiScan.BackColor = Color.FromArgb(240, 240, 240);
-            btnWifiScan.BackgroundImage = (Image)resources.GetObject("btnWifiScan.BackgroundImage");
-            btnWifiScan.BackgroundImageLayout = ImageLayout.Center;
             btnWifiScan.FlatAppearance.BorderSize = 0;
             btnWifiScan.FlatStyle = FlatStyle.Flat;
-            btnWifiScan.Location = new Point(22, 100);
+            btnWifiScan.Location = new Point(22, 70);
             btnWifiScan.Name = "btnWifiScan";
-            btnWifiScan.Size = new Size(311, 100);
+            btnWifiScan.Size = new Size(311, 60);
             btnWifiScan.TabIndex = 0;
             btnWifiScan.UseVisualStyleBackColor = true;
             btnWifiScan.Click += btnWifiScan_Click;
@@ -52,13 +50,11 @@
             // btnConnectedDevices
             // 
             btnConnectedDevices.BackColor = Color.FromArgb(240, 240, 240);
-            btnConnectedDevices.BackgroundImage = (Image)resources.GetObject("btnConnectedDevices.BackgroundImage");
-            btnConnectedDevices.BackgroundImageLayout = ImageLayout.Center;
             btnConnectedDevices.FlatAppearance.BorderSize = 0;
             btnConnectedDevices.FlatStyle = FlatStyle.Flat;
-            btnConnectedDevices.Location = new Point(22, 220);
+            btnConnectedDevices.Location = new Point(22, 150);
             btnConnectedDevices.Name = "btnConnectedDevices";
-            btnConnectedDevices.Size = new Size(311, 100);
+            btnConnectedDevices.Size = new Size(311, 60);
             btnConnectedDevices.TabIndex = 1;
             btnConnectedDevices.UseVisualStyleBackColor = true;
             btnConnectedDevices.Click += btnConnectedDevices_Click;
@@ -66,20 +62,20 @@
             // labelWifi
             // 
             labelWifi.AutoSize = true;
-            labelWifi.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            labelWifi.Location = new Point(22, 77);
+            labelWifi.Font = new Font("Segoe UI", 9F);
+            labelWifi.Location = new Point(22, 47);
             labelWifi.Name = "labelWifi";
-            labelWifi.Size = new Size(71, 20);
+            labelWifi.Size = new Size(82, 20);
             labelWifi.TabIndex = 2;
             labelWifi.Text = "WiFi Ağları";
             // 
             // labelDevices
             // 
             labelDevices.AutoSize = true;
-            labelDevices.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            labelDevices.Location = new Point(22, 197);
+            labelDevices.Font = new Font("Segoe UI", 9F);
+            labelDevices.Location = new Point(22, 127);
             labelDevices.Name = "labelDevices";
-            labelDevices.Size = new Size(95, 20);
+            labelDevices.Size = new Size(100, 20);
             labelDevices.TabIndex = 3;
             labelDevices.Text = "Bağlı Cihazlar";
             // 
@@ -88,7 +84,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(240, 240, 240);
-            ClientSize = new Size(355, 618);
+            ClientSize = new Size(355, 400);
             Controls.Add(labelDevices);
             Controls.Add(labelWifi);
             Controls.Add(btnConnectedDevices);
