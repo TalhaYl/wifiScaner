@@ -1,0 +1,8 @@
+C:\Users\TALHA\Documents\GitHub\wifiScaner\wifi4\bin\Release\net8.0-windows\win-x64\publish\wifi4.exe
+C:\Users\TALHA\Documents\GitHub\wifiScaner\wifi4\bin\Release\net8.0-windows\win-x64\publish\Resources\g2.gif
+C:\Users\TALHA\Documents\GitHub\wifiScaner\wifi4\bin\Release\net8.0-windows\win-x64\publish\wifi4.dll
+C:\Users\TALHA\Documents\GitHub\wifiScaner\wifi4\bin\Release\net8.0-windows\win-x64\publish\wifi4.deps.json
+C:\Users\TALHA\Documents\GitHub\wifiScaner\wifi4\bin\Release\net8.0-windows\win-x64\publish\wifi4.runtimeconfig.json
+C:\Users\TALHA\Documents\GitHub\wifiScaner\wifi4\bin\Release\net8.0-windows\win-x64\publish\wifi4.pdb
+C:\Users\TALHA\Documents\GitHub\wifiScaner\wifi4\bin\Release\net8.0-windows\win-x64\publish\PacketDotNet.dll
+C:\Users\TALHA\Documents\GitHub\wifiScaner\wifi4\bin\Release\net8.0-windows\win-x64\publish\SharpPcap.dll

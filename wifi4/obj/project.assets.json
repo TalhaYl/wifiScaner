@@ -78,6 +78,78 @@
           }
         }
       }
+    },
+    "net8.0-windows7.0/win-x64": {
+      "PacketDotNet/1.4.6": {
+        "type": "package",
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.1/PacketDotNet.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.1/PacketDotNet.dll": {}
+        }
+      },
+      "SharpPcap/6.2.2": {
+        "type": "package",
+        "dependencies": {
+          "PacketDotNet": "1.4.6",
+          "System.Memory": "4.5.5",
+          "System.Text.Encoding.CodePages": "6.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/SharpPcap.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/SharpPcap.dll": {}
+        }
+      },
+      "System.Memory/4.5.5": {
+        "type": "package",
+        "compile": {
+          "ref/netcoreapp2.1/_._": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.1/_._": {}
+        }
+      },
+      "System.Runtime.CompilerServices.Unsafe/6.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/System.Runtime.CompilerServices.Unsafe.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/System.Runtime.CompilerServices.Unsafe.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/netcoreapp3.1/_._": {}
+        }
+      },
+      "System.Text.Encoding.CodePages/6.0.0": {
+        "type": "package",
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
+        },
+        "compile": {
+          "lib/net6.0/System.Text.Encoding.CodePages.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "runtimes/win/lib/net6.0/System.Text.Encoding.CodePages.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/netcoreapp3.1/_._": {}
+        }
+      }
     }
   },
   "libraries": {
@@ -207,11 +279,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\wifi4.csproj",
+      "projectUniqueName": "C:\\Users\\TALHA\\Documents\\GitHub\\wifiScaner\\wifi4\\wifi4.csproj",
       "projectName": "wifi4",
-      "projectPath": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\wifi4.csproj",
+      "projectPath": "C:\\Users\\TALHA\\Documents\\GitHub\\wifiScaner\\wifi4\\wifi4.csproj",
       "packagesPath": "C:\\Users\\TALHA\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\obj\\",
+      "outputPath": "C:\\Users\\TALHA\\Documents\\GitHub\\wifiScaner\\wifi4\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -275,6 +347,11 @@
           }
         },
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+      }
+    },
+    "runtimes": {
+      "win-x64": {
+        "#import": []
       }
     }
   }
