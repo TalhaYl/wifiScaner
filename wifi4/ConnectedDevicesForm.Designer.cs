@@ -43,7 +43,7 @@
             // 
             // btnScan
             // 
-            btnScan.BackgroundImage = (Image)resources.GetObject("btnScan.BackgroundImage");
+            btnScan.BackgroundImage = Properties.Resources.icons8_multiple_devices_50;
             btnScan.BackgroundImageLayout = ImageLayout.Center;
             btnScan.FlatAppearance.BorderSize = 0;
             btnScan.FlatStyle = FlatStyle.Flat;

@@ -1,0 +1,160 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|c:\\users\\talha\\documents\\github\\wifi\\wifi4\\deviceinfoform .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|solutionrelative:wifi4\\deviceinfoform .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|c:\\users\\talha\\documents\\github\\wifi\\wifi4\\deviceinfoform .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|solutionrelative:wifi4\\deviceinfoform .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|c:\\users\\talha\\documents\\github\\wifi\\wifi4\\connecteddevicesform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|solutionrelative:wifi4\\connecteddevicesform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|c:\\users\\talha\\documents\\github\\wifi\\wifi4\\connecteddevicesform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|solutionrelative:wifi4\\connecteddevicesform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|c:\\users\\talha\\documents\\github\\wifi\\wifi4\\formwifinetworks.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|solutionrelative:wifi4\\formwifinetworks.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|c:\\users\\talha\\documents\\github\\wifi\\wifi4\\formwifinetworks.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|solutionrelative:wifi4\\formwifinetworks.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|c:\\users\\talha\\documents\\github\\wifi\\wifi4\\mainmenuform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|solutionrelative:wifi4\\mainmenuform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|c:\\users\\talha\\documents\\github\\wifi\\wifi4\\mainmenuform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{206F8233-88FF-4578-9F8D-ED88C0749C52}|wifi4\\wifi4.csproj|solutionrelative:wifi4\\mainmenuform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "DeviceInfoForm .cs",
+              "DocumentMoniker": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\DeviceInfoForm .cs",
+              "RelativeDocumentMoniker": "wifi4\\DeviceInfoForm .cs",
+              "ToolTip": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\DeviceInfoForm .cs",
+              "RelativeToolTip": "wifi4\\DeviceInfoForm .cs",
+              "ViewState": "AgIAAPMCAAAAAAAAAAAmwAUDAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T07:06:58.979Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "DeviceInfoForm .cs [Tasar\u0131m]",
+              "DocumentMoniker": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\DeviceInfoForm .cs",
+              "RelativeDocumentMoniker": "wifi4\\DeviceInfoForm .cs",
+              "ToolTip": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\DeviceInfoForm .cs [Tasar\u0131m]",
+              "RelativeToolTip": "wifi4\\DeviceInfoForm .cs [Tasar\u0131m]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T07:06:57.262Z",
+              "EditorCaption": " [Tasar\u0131m]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ConnectedDevicesForm.cs",
+              "DocumentMoniker": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\ConnectedDevicesForm.cs",
+              "RelativeDocumentMoniker": "wifi4\\ConnectedDevicesForm.cs",
+              "ToolTip": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\ConnectedDevicesForm.cs",
+              "RelativeToolTip": "wifi4\\ConnectedDevicesForm.cs",
+              "ViewState": "AgIAAOUCAAAAAAAAAAAiwAoDAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T07:02:45.517Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ConnectedDevicesForm.cs [Tasar\u0131m]",
+              "DocumentMoniker": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\ConnectedDevicesForm.cs",
+              "RelativeDocumentMoniker": "wifi4\\ConnectedDevicesForm.cs",
+              "ToolTip": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\ConnectedDevicesForm.cs [Tasar\u0131m]",
+              "RelativeToolTip": "wifi4\\ConnectedDevicesForm.cs [Tasar\u0131m]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T07:02:43.877Z",
+              "EditorCaption": " [Tasar\u0131m]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "FormWifiNetworks.cs",
+              "DocumentMoniker": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\FormWifiNetworks.cs",
+              "RelativeDocumentMoniker": "wifi4\\FormWifiNetworks.cs",
+              "ToolTip": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\FormWifiNetworks.cs",
+              "RelativeToolTip": "wifi4\\FormWifiNetworks.cs",
+              "ViewState": "AgIAALIAAAAAAAAAAAAiwNcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T07:00:00.221Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "FormWifiNetworks.cs [Tasar\u0131m]",
+              "DocumentMoniker": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\FormWifiNetworks.cs",
+              "RelativeDocumentMoniker": "wifi4\\FormWifiNetworks.cs",
+              "ToolTip": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\FormWifiNetworks.cs [Tasar\u0131m]",
+              "RelativeToolTip": "wifi4\\FormWifiNetworks.cs [Tasar\u0131m]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T06:59:58.578Z",
+              "EditorCaption": " [Tasar\u0131m]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "MainMenuForm.cs",
+              "DocumentMoniker": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\MainMenuForm.cs",
+              "RelativeDocumentMoniker": "wifi4\\MainMenuForm.cs",
+              "ToolTip": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\MainMenuForm.cs",
+              "RelativeToolTip": "wifi4\\MainMenuForm.cs",
+              "ViewState": "AgIAAJMAAAAAAAAAAAAcwLcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T06:58:02.246Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "MainMenuForm.cs [Tasar\u0131m]",
+              "DocumentMoniker": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\MainMenuForm.cs",
+              "RelativeDocumentMoniker": "wifi4\\MainMenuForm.cs",
+              "ToolTip": "C:\\Users\\TALHA\\Documents\\GitHub\\wifi\\wifi4\\MainMenuForm.cs [Tasar\u0131m]",
+              "RelativeToolTip": "wifi4\\MainMenuForm.cs [Tasar\u0131m]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-30T06:57:59.959Z",
+              "EditorCaption": " [Tasar\u0131m]"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
